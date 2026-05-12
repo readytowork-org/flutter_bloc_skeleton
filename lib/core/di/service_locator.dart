@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_push_notification_module/fcm_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -9,6 +10,7 @@ import '../../features/cart/cart_di.dart';
 import '../../features/product/product_di.dart';
 
 import '../../features/profile/presentation/profile_di.dart';
+import '../../firebase_options.dart';
 import '../../shared/cubit/locale_cubit.dart';
 import '../routes/app_routes.dart';
 import '../storage/secure_token_storage.dart';
@@ -30,6 +32,9 @@ Future<void> init() async {
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     ),
   );
+
+
+
 
   /// Token Storage
   final tokenStorage = SecureTokenStorage(sl<FlutterSecureStorage>());
@@ -79,4 +84,10 @@ Future<void> init() async {
       refreshListenable: sl<AuthBloc>().asListenable(),
     ),
   );
+}
+
+
+Future<void> initFirebase() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
 }
