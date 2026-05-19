@@ -13,3 +13,4 @@ firebase.json
 google_sheet.json
 skills-lock.json
 firebase_service_account_key.json
+firebase_options.dart

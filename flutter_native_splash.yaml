@@ -1,0 +1,26 @@
+flutter_native_splash:
+  # dart run flutter_native_splash:create
+  # dart run flutter_native_splash:remove
+
+  android: true
+  ios: true
+  web: false
+
+  color: "#ffffff"
+  color_dark: "#ffffff"
+
+  image: assets/icons/home_icon_below_12.png
+  image_dark: assets/icons/home_icon_below_12.png
+
+  android_gravity: center
+  ios_content_mode: center
+
+  android_12:
+    color: "#ffffff"
+    color_dark: "#ffffff"
+
+    image: assets/icons/home_icon_12_above.png
+    image_dark: assets/icons/home_icon_12_above.png
+
+    icon_background_color: "#ffffff"
+    icon_background_color_dark: "#ffffff"

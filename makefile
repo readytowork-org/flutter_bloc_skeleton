@@ -1,62 +1,55 @@
+# --- Config ---
 GREEN=\033[1;32m
-NC=\033[0m # No Color
+NC=\033[0m
+-include .env_vars
 
-ANDROID_DIR=android
-GOOGLE_SERVICE_JSON=google-services.json
-GOOGLE_SERVICE_ANDROID=$(ANDROID_DIR)/app/
-
-IOS_DIR=ios
-GOOGLE_SERVICE_INFO=GoogleService-Info.plist
-GOOGLE_SERVICE_IOS=$(IOS_DIR)/Runner/
-
-# Project Setup
+# --- Project Setup ---
 project-setup:
-	@make flutter-clean
-	@cp -r hooks/prepare-commit-msg .git/hooks/
-	@cp -r hooks/commit-msg .git/hooks/
-	@cp -r hooks/pre-commit .git/hooks/
-	@chmod +x .git/hooks/prepare-commit-msg
-	@chmod +x .git/hooks/commit-msg
-	@chmod +x .git/hooks/pre-commit   
-	@echo "$(GREEN)Pre commit hook setup successfully$(NC)"
+	@$(MAKE) flutter-clean
+	@bash scripts/setup_hooks.sh
 
 set-env-dev:
-	@cp -r env/dev/config.dart lib/
-	@cp -r env/dev/$(GOOGLE_SERVICE_JSON) $(GOOGLE_SERVICE_ANDROID)
-	@cp -r env/dev/$(GOOGLE_SERVICE_INFO) $(GOOGLE_SERVICE_IOS)
-
-	@cd android && ./gradlew clean && cd .. && yarn cache clean
-
-	@echo "$(GREEN)Successfully copied project dev environment config$(NC)"
-
-set-env-prod:
-	@cp -r env/prod/config.dart lib/
-	@cp -r env/prod/$(GOOGLE_SERVICE_JSON) $(GOOGLE_SERVICE_ANDROID)
-	@cp -r env/prod/$(GOOGLE_SERVICE_INFO) $(GOOGLE_SERVICE_IOS)
-
-	@cd android && ./gradlew clean && cd .. && yarn cache clean
-
-	@echo "$(GREEN)Successfully copied project prod environment config$(NC)"
+	@bash scripts/set_env.sh dev
 
 set-env-staging:
-	@cp -r env/staging/config.dart lib/
-	@cp -r env/staging/$(GOOGLE_SERVICE_JSON) $(GOOGLE_SERVICE_ANDROID)
-	@cp -r env/staging/$(GOOGLE_SERVICE_INFO) $(GOOGLE_SERVICE_IOS)
+	@bash scripts/set_env.sh staging
 
-	@cd android && ./gradlew clean && cd .. && yarn cache clean
+set-env-prod:
+	@bash scripts/set_env.sh prod
 
-	@echo "$(GREEN)Successfully copied project staging environment config$(NC)"
-
-.PHONY: set-env-dev, set-env-prod, set-env-staging
-
+# --- Flutter Maintenance ---
 flutter-clean:
-	@echo "$(GREEN) Cleaning Flutter project...$(NC)"
+	@echo "$(GREEN)Cleaning Flutter project...$(NC)"
 	@flutter clean
-	@echo "$(GREEN) Fetching dependencies...$(NC)"
 	@flutter pub get
 
 flutter-fix:
-	@echo "$(GREEN) Running Flutter format...$(NC)"
 	@dart format .
-	@echo "$(GREEN) Running Flutter fix...$(NC)"
 	@dart fix --apply
+
+generate:
+	@dart run build_runner build --delete-conflicting-outputs
+
+watch:
+	@dart run build_runner watch --delete-conflicting-outputs
+
+# --- Advanced Setup ---
+generate_dynamic_links:
+	@bash scripts/configure_links.sh
+
+setup-firebase:
+	@bash scripts/setup_firebase.sh
+
+swagger-gen:
+	@dart generator/swagger_parser.dart $(TAG) $(FILE)
+
+update-gradle:
+	@chmod +x scripts/patch_gradle.sh
+	@bash scripts/patch_gradle.sh
+
+setup-android-keys:
+	@bash scripts/generate_keystore.sh
+
+setup-android-production: setup-android-keys update-gradle
+
+.PHONY: project-setup set-env-dev set-env-staging set-env-prod flutter-clean flutter-fix generate watch generate_dynamic_links setup-firebase swagger-gen

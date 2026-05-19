@@ -1,4 +1,4 @@
-import 'package:flutter_bloc_skeleton/app/core/utils/enum/index.dart';
+import 'package:flutter_bloc_skeleton/core/utils/enum/index.dart';
 
 class Config {
   static const baseUrl = "url";
