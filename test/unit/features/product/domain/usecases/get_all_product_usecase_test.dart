@@ -41,8 +41,9 @@ void main() {
 
   test('should get products from the repository', () async {
     // arrange
-    when(() => mockRepository.getAllProducts(any()))
-        .thenAnswer((_) async => ApiResult.success(tProductResponseEntity));
+    when(
+      () => mockRepository.getAllProducts(any()),
+    ).thenAnswer((_) async => ApiResult.success(tProductResponseEntity));
 
     // act
     final result = await usecase.call(tPaginationParams);
@@ -56,8 +57,9 @@ void main() {
   test('should return failure when repository fails', () async {
     // arrange
     const tFailure = ServerFailure('Server Error');
-    when(() => mockRepository.getAllProducts(any()))
-        .thenAnswer((_) async => const ApiResult.failure(tFailure));
+    when(
+      () => mockRepository.getAllProducts(any()),
+    ).thenAnswer((_) async => const ApiResult.failure(tFailure));
 
     // act
     final result = await usecase.call(tPaginationParams);

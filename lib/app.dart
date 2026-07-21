@@ -14,7 +14,9 @@ import 'package:flutter_bloc/flutter_bloc.dart'
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/di/service_locator.dart';
+import 'config.dart';
 import 'core/routes/app_routes.dart';
+import 'core/utils/enum/index.dart';
 import 'features/auth/auth.dart';
 import 'core/theme/app_theme.dart';
 import 'l10n/s.dart';
@@ -47,10 +49,9 @@ class App extends StatelessWidget {
                 localizationsDelegates: S.localizationsDelegates,
                 supportedLocales: S.supportedLocales,
                 builder: (context, child) {
-                  if (child == null) {
-                    return const SizedBox.shrink();
-                  }
-                  return LocaleSwitcher(child: child);
+                  final content = child ?? const SizedBox.shrink();
+                  if (Config.flavour == Flavour.production) return content;
+                  return LocaleSwitcher(child: content);
                 },
               ),
             );

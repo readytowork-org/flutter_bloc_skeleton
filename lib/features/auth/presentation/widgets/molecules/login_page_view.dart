@@ -154,8 +154,9 @@ class _LoginPageViewState extends State<LoginPageView> {
                             return SizedBox(
                               height: 54,
                               child: ElevatedButton(
-                                onPressed:
-                                    isLoading ? null : onSignInButtonPressed,
+                                onPressed: isLoading
+                                    ? null
+                                    : onSignInButtonPressed,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
@@ -164,23 +165,22 @@ class _LoginPageViewState extends State<LoginPageView> {
                                     borderRadius: BorderRadius.circular(14),
                                   ),
                                 ),
-                                child:
-                                    isLoading
-                                        ? const SizedBox(
-                                          width: 22,
-                                          height: 22,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2.5,
-                                          ),
-                                        )
-                                        : const Text(
-                                          loginButtonText,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                child: isLoading
+                                    ? const SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2.5,
                                         ),
+                                      )
+                                    : const Text(
+                                        loginButtonText,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                               ),
                             );
                           },

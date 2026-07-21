@@ -14,7 +14,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Product name'), findsOneWidget); // S.of(context).cartProductName
+    expect(
+      find.text('Product name'),
+      findsOneWidget,
+    ); // S.of(context).cartProductName
     expect(find.text('Product'), findsOneWidget); // S.of(context).cartProduct
   });
 }

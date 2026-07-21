@@ -15,6 +15,7 @@ echo -e "${GREEN}Switching to $ENV environment...${NC}"
 
 # Copy Config and Services
 cp -r "env/$ENV/config.dart" lib/
+cp -r "env/$ENV/firebase_options.dart" lib/
 cp -r "env/$ENV/google-services.json" "$ANDROID_DIR/"
 cp -r "env/$ENV/GoogleService-Info.plist" "$IOS_DIR/"
 
