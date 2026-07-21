@@ -49,7 +49,9 @@ void main() {
 
         // Clear the pre-filled username
         await tester.enterText(
-          find.byWidgetPredicate((w) => w is FormBuilderTextField && w.name == 'username'),
+          find.byWidgetPredicate(
+            (w) => w is FormBuilderTextField && w.name == 'username',
+          ),
           '',
         );
 

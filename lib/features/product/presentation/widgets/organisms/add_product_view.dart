@@ -229,7 +229,9 @@ class _AddProductViewState extends State<AddProductView> {
                                         size: 20,
                                       ),
                                 label: Text(
-                                  isLoading ? 'Adding...' : addProductButtonText,
+                                  isLoading
+                                      ? 'Adding...'
+                                      : addProductButtonText,
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
