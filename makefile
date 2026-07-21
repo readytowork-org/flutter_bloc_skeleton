@@ -8,11 +8,11 @@ project-setup:
 	@$(MAKE) flutter-clean
 	@bash scripts/setup_hooks.sh
 
+set-env-local:
+	@bash scripts/set_env.sh local
+
 set-env-dev:
 	@bash scripts/set_env.sh dev
-
-set-env-staging:
-	@bash scripts/set_env.sh staging
 
 set-env-prod:
 	@bash scripts/set_env.sh prod

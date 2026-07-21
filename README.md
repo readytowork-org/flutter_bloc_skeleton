@@ -169,6 +169,7 @@ The project includes a suite of automation scripts (located in `scripts/`) and a
 | Command | Description |
 | :--- | :--- |
 | `make project-setup` | Full project initialization (Clean + Pub Get + Git Hooks). |
+| `make set-env-local` | Configure environment for local. |
 | `make set-env-dev` | Configure environment for Development. |
 | `make set-env-prod` | Configure environment for Production. |
 | `make generate` | Run `build_runner` for one-time code generation. |
