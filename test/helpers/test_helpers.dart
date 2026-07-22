@@ -23,28 +23,15 @@ class MockGetProductCategoryBloc
     extends MockBloc<GetProductCategoryEvent, GetProductCategoryState>
     implements GetProductCategoryBloc {}
 
-class FakeAuthEvent extends Fake implements AuthEvent {}
-
-class FakeAuthState extends Fake implements AuthState {}
-
-class FakePaginationEvent extends Fake implements PaginationEvent {}
-
-class FakeProductPaginationState extends Fake
-    implements PaginationState<ProductEntity> {}
-
-class FakeGetProductCategoryEvent extends Fake
-    implements GetProductCategoryEvent {}
-
-class FakeGetProductCategoryState extends Fake
-    implements GetProductCategoryState {}
-
 void registerAuthFallbacks() {
-  registerFallbackValue(FakeAuthEvent());
-  registerFallbackValue(FakeAuthState());
-  registerFallbackValue(FakePaginationEvent());
-  registerFallbackValue(FakeProductPaginationState());
-  registerFallbackValue(FakeGetProductCategoryEvent());
-  registerFallbackValue(FakeGetProductCategoryState());
+  registerFallbackValue(const AuthEvent.appStarted());
+  registerFallbackValue(const AuthState.initial());
+  registerFallbackValue(const PaginationEvent<ProductEntity>.fetch());
+  registerFallbackValue(const PaginationState<ProductEntity>());
+  registerFallbackValue(
+    const GetProductCategoryEvent.getProductCategoryRequested(),
+  );
+  registerFallbackValue(const GetProductCategoryState.initial());
 }
 
 // ─── Shared pump helper ───────────────────────────────────────────────────────

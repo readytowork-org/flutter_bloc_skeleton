@@ -55,13 +55,14 @@ class ProfileDetailsSection extends StatelessWidget {
               label: "Logout",
               onTap: (bloc) => bloc.add(LogoutRequested()),
               listener: (context, state) {
-                state.maybeWhen(
-                  unauthenticated: (message) {
+                switch (state) {
+                  case Unauthenticated(:final message):
                     context.showSnackBar(message ?? "Logged out");
-                  },
-                  failure: (message) => context.showSnackBar(message),
-                  orElse: () {},
-                );
+                  case AuthFailure(:final message):
+                    context.showSnackBar(message);
+                  default:
+                    break;
+                }
               },
               isLoading: (state) => state is AuthLoading,
               variant: ButtonVariant.outlined,

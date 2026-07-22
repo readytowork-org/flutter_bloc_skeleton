@@ -1,31 +1,28 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../../core/network/api_result.dart';
 import '../../../../../shared/state/base_state.dart';
 import '../../../domain/entities/product_category_entity.dart';
 
-import '../../../domain/usecases/product_category_usecase.dart';
+import '../../../domain/repository/product_repository.dart';
 
 part 'get_product_category_event.dart';
 part 'get_product_category_state.dart';
-part 'get_product_category_bloc.freezed.dart';
 
 class GetProductCategoryBloc
     extends Bloc<GetProductCategoryEvent, GetProductCategoryState> {
-  final ProductCategoryUseCase _productCategoryUseCase;
+  final ProductRepository _repository;
 
-  GetProductCategoryBloc({
-    required ProductCategoryUseCase productCategoryUseCase,
-  }) : _productCategoryUseCase = productCategoryUseCase,
-       super(GetProductCategoryState.initial()) {
+  GetProductCategoryBloc({required ProductRepository repository})
+    : _repository = repository,
+      super(GetProductCategoryState.initial()) {
     on<GetProductCategoryRequested>(_onGetProductCategoryRequested);
   }
   Future<void> _onGetProductCategoryRequested(
     GetProductCategoryRequested event,
     Emitter<GetProductCategoryState> emit,
   ) async {
-    final result = await _productCategoryUseCase();
+    final result = await _repository.getAllCategories();
 
     result.when(
       success: (res) => emit(GetProductCategoryState.loaded(res: res)),

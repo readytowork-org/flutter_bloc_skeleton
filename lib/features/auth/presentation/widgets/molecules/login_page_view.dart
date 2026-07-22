@@ -21,12 +21,14 @@ class _LoginPageViewState extends State<LoginPageView> {
   final formKey = GlobalKey<FormBuilderState>();
 
   void onAuthStateListener(BuildContext context, AuthState state) {
-    state.maybeWhen(
-      authenticated: (user) =>
-          context.showSnackBar('Welcome back, ${user.username}'),
-      failure: (message) => context.showSnackBar(message),
-      orElse: () {},
-    );
+    switch (state) {
+      case Authenticated(:final user):
+        context.showSnackBar('Welcome back, ${user.username}');
+      case AuthFailure(:final message):
+        context.showSnackBar(message);
+      default:
+        break;
+    }
   }
 
   void onSignInButtonPressed() {

@@ -27,21 +27,12 @@ flutter-fix:
 	@dart format .
 	@dart fix --apply
 
-generate:
-	@dart run build_runner build --delete-conflicting-outputs
-
-watch:
-	@dart run build_runner watch --delete-conflicting-outputs
-
 # --- Advanced Setup ---
 generate_dynamic_links:
 	@bash scripts/configure_links.sh
 
 setup-firebase:
 	@bash scripts/setup_firebase.sh
-
-swagger-gen:
-	@dart generator/swagger_parser.dart $(TAG) $(FILE)
 
 update-gradle:
 	@chmod +x scripts/patch_gradle.sh
@@ -52,4 +43,4 @@ setup-android-keys:
 
 setup-android-production: setup-android-keys update-gradle
 
-.PHONY: project-setup set-env-dev set-env-staging set-env-prod flutter-clean flutter-fix generate watch generate_dynamic_links setup-firebase swagger-gen
+.PHONY: project-setup set-env-dev set-env-staging set-env-prod flutter-clean flutter-fix generate_dynamic_links setup-firebase

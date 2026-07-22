@@ -1,19 +1,17 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../../core/network/api_result.dart';
 import '../../../../../core/utils/typedf/index.dart';
 import '../../../domain/entities/product_entity.dart';
-import '../../../domain/usecases/edit_product_usecase.dart';
+import '../../../domain/repository/product_repository.dart';
 
 part 'edit_product_event.dart';
 part 'edit_product_state.dart';
-part 'edit_product_bloc.freezed.dart';
 
 class EditProductBloc extends Bloc<EditProductEvent, EditProductState> {
-  final EditProductUseCase _editProductUseCase;
-  EditProductBloc({required EditProductUseCase editProductUseCase})
-    : _editProductUseCase = editProductUseCase,
+  final ProductRepository _repository;
+  EditProductBloc({required ProductRepository repository})
+    : _repository = repository,
       super(EditProductState.initial()) {
     on<UpdatedProductRequested>(_onUpdatedProductRequested);
   }
@@ -22,7 +20,10 @@ class EditProductBloc extends Bloc<EditProductEvent, EditProductState> {
     Emitter<EditProductState> emit,
   ) async {
     emit(const EditProductState.loading());
-    final result = await _editProductUseCase(event.productData, id: event.id);
+    final result = await _repository.updateProduct(
+      event.productData,
+      id: event.id,
+    );
     result.when(
       success: (product) => emit(EditProductState.success(product: product)),
       failure: (failure) =>

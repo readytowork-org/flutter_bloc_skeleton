@@ -1,33 +1,18 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import '../../../../core/network/api_result.dart';
 import '../../../../core/utils/typedf/index.dart';
 import '../../domain/entities/user_entity.dart';
-import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/logout_usecase.dart';
-import '../../domain/usecases/session_usecase.dart';
-import '../../domain/usecases/signup_usecase.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
-part 'auth_bloc.freezed.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final LoginUseCase _loginUseCase;
-  final SignupUseCase _signupUseCase;
-  final SessionUseCase _sessionUseCase;
-  final LogoutUseCase _logoutUseCase;
+  final AuthRepository _repository;
 
-  AuthBloc({
-    required LoginUseCase loginUseCase,
-    required SignupUseCase signupUseCase,
-    required SessionUseCase sessionUseCase,
-    required LogoutUseCase logoutUseCase,
-  }) : _loginUseCase = loginUseCase,
-       _signupUseCase = signupUseCase,
-       _sessionUseCase = sessionUseCase,
-       _logoutUseCase = logoutUseCase,
-       super(const AuthInitial()) {
+  AuthBloc({required AuthRepository repository})
+    : _repository = repository,
+      super(const AuthInitial()) {
     on<SignUpRequested>(_onSignUpRequested);
     on<LoginRequested>(_onLoginRequested);
     on<LogoutRequested>(_onLogoutRequested);
@@ -40,7 +25,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    final result = await _loginUseCase(event.userMap);
+    final result = await _repository.login(
+      event.userMap['username'],
+      event.userMap['password'],
+    );
 
     result.when(
       success: (user) => emit(Authenticated(user: user)),
@@ -53,7 +41,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    final result = await _signupUseCase(event.userMap);
+    final result = await _repository.signUp(
+      event.userMap['fullName'],
+      event.userMap['email'],
+      event.userMap['password'],
+    );
 
     result.when(
       success: (user) => emit(Authenticated(user: user)),
@@ -65,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    final result = await _logoutUseCase();
+    final result = await _repository.logout();
     result.when(
       success: (message) => emit(Unauthenticated(message: message)),
       failure: (failure) => emit(AuthFailure(message: failure.message)),
@@ -73,7 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
-    final result = await _sessionUseCase();
+    final result = await _repository.getCurrentSession();
     result.when(
       success: (token) => emit(
         Authenticated(

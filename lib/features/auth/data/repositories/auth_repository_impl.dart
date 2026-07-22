@@ -1,22 +1,28 @@
 import '../../../../core/network/api_result.dart';
+import '../../../../core/network/api_endpoints.dart';
+import '../../../../core/network/dio_client.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/storage/token_storage.dart' show TokenStorage;
 import '../../../../core/utils/strings/index.dart';
 import '../../domain/entities/token_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../datasources/auth_remote_datasource.dart';
+import '../models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource _remoteDataSource;
+  final DioClient _client;
   final TokenStorage _tokenStorage;
 
-  AuthRepositoryImpl(this._remoteDataSource, this._tokenStorage);
+  AuthRepositoryImpl(this._client, this._tokenStorage);
 
   @override
   Future<ApiResult<UserEntity>> login(String username, String password) async {
     try {
-      final userModel = await _remoteDataSource.login(username, password);
+      final response = await _client.post(
+        ApiEndpoints.login,
+        data: {'username': username, 'password': password, 'expiresInMins': 1},
+      );
+      final userModel = UserModel.fromJson(response.data);
       if (userModel.accessToken != null || userModel.refreshToken != null) {
         await _tokenStorage.saveTokens(
           accessToken: userModel.accessToken ?? emptyString,
@@ -24,16 +30,6 @@ class AuthRepositoryImpl implements AuthRepository {
         );
       }
       return ApiResult.success(userModel.toEntity());
-    } catch (e) {
-      return ApiResult.failure(ServerFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<ApiResult<TokenEntity>> refreshToken(String token) async {
-    try {
-      final tokenEntity = await _remoteDataSource.refreshToken(token);
-      return ApiResult.success(tokenEntity);
     } catch (e) {
       return ApiResult.failure(ServerFailure(e.toString()));
     }
@@ -52,7 +48,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<ApiResult<TokenEntity>> getCurrentSession() async {
     try {
-      final tokenEntity = await _remoteDataSource.getCurrentSession();
+      final tokenEntity = TokenEntity(
+        accessToken: await _tokenStorage.getAccessToken(),
+        refreshToken: await _tokenStorage.getRefreshToken(),
+      );
       if (tokenEntity.accessToken != null || tokenEntity.refreshToken != null) {
         return ApiResult.success(tokenEntity);
       } else {

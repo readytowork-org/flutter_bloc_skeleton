@@ -1,28 +1,41 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_result.dart';
+import '../../../../core/network/api_endpoints.dart';
+import '../../../../core/network/dio_client.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/index.dart';
 import '../../../../shared/models/pagination_params.dart';
 import '../../domain/entities/product_category_entity.dart';
 import '../../domain/entities/product_entity.dart';
 import '../../domain/repository/product_repository.dart';
-import '../datasources/product_remote_datasource.dart';
+import '../models/product_category_model.dart';
+import '../models/product_model.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  final ProductRemoteDataSource _productApiService;
+  final DioClient _client;
 
-  ProductRepositoryImpl(ProductRemoteDataSource productApiService)
-    : _productApiService = productApiService;
+  ProductRepositoryImpl(this._client);
 
   @override
   Future<ApiResult<ProductResponseEntity>> getAllProducts(
     PaginationParams paginationParams,
   ) async {
     try {
-      final responseM = await _productApiService.getAllProducts(
-        paginationParams,
+      final skip =
+          paginationParams.skip ??
+          (paginationParams.page - 1) * paginationParams.pageSize;
+      final filter = paginationParams.filter;
+      final path = filter == null || filter.contains('All')
+          ? filter?.contains('Search') == true
+                ? ApiEndpoints.getProducts.addId(filter)
+                : ApiEndpoints.getProducts
+          : ApiEndpoints.getProducts.addId(filter);
+      final response = await _client.get(
+        path,
+        queryParameters: {'limit': paginationParams.pageSize, 'skip': skip},
       );
+      final responseM = ProductResponseM.fromJson(response.data);
       final products = responseM.data.map((m) => m.toEntity()).toList();
       return ApiResult.success(
         ProductResponseEntity(products: products, total: responseM.count),
@@ -35,7 +48,8 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<ApiResult<ProductEntity>> getProductById(String id) async {
     try {
-      final responseM = await _productApiService.getProductById(id);
+      final response = await _client.get(ApiEndpoints.getProducts.addId(id));
+      final responseM = ProductM.fromJson(response.data);
       return ApiResult.success(responseM.toEntity());
     } on DioException catch (e) {
       return ApiResult.failure(handleDioError(e));
@@ -45,7 +59,11 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<ApiResult<ProductEntity>> addProduct(JsonMap product) async {
     try {
-      final responseM = await _productApiService.addProduct(product);
+      final response = await _client.post(
+        ApiEndpoints.addProduct,
+        data: product,
+      );
+      final responseM = ProductM.fromJson(response.data);
       return ApiResult.success(responseM.toEntity());
     } on DioException catch (e) {
       return ApiResult.failure(handleDioError(e));
@@ -58,7 +76,11 @@ class ProductRepositoryImpl implements ProductRepository {
     required String id,
   }) async {
     try {
-      final responseM = await _productApiService.updateProduct(product, id: id);
+      final response = await _client.put(
+        ApiEndpoints.getProducts.addId(id),
+        data: product,
+      );
+      final responseM = ProductM.fromJson(response.data);
       return ApiResult.success(responseM.toEntity());
     } on DioException catch (e) {
       return ApiResult.failure(handleDioError(e));
@@ -68,7 +90,8 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<ApiResult<List<ProductCategoryEntity>>> getAllCategories() async {
     try {
-      final responseM = await _productApiService.getAllCategories();
+      final response = await _client.get(ApiEndpoints.productCategories);
+      final responseM = ProductCategoryM.parseList(response.data);
       final categories = [
         ProductCategoryEntity(name: "All"),
         ...responseM.map((m) => m.toEntity()),
