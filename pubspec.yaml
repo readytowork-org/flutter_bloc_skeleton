@@ -30,7 +30,7 @@ dependencies:
   json_annotation: ^4.9.0
   firebase_push_notification_module:
     git:
-      url: https://github.com/Aashish-Dahal/fcm_module.git
+      url: https://github.com/readytowork-org/fcm_module.git
       ref: develop
   flutter_hooks: ^0.21.3+1
   flutter_localizations:

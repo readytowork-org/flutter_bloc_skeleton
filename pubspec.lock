@@ -430,8 +430,8 @@ packages:
     description:
       path: "."
       ref: develop
-      resolved-ref: "3380bdf8fb2fc47f14996e788de938c985375c63"
-      url: "https://github.com/Aashish-Dahal/fcm_module.git"
+      resolved-ref: b27c23eed0825a4a45dbf6b0c5a6f8d4985f00a6
+      url: "https://github.com/readytowork-org/fcm_module.git"
     source: git
     version: "1.0.0+1"
   fixnum:
