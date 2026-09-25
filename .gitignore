@@ -53,7 +53,7 @@ app.*.map.json
 /firebase.json
 /lib/firebase_options.dart
 /android/app/google-services.json
-/ios/Runner/GoogleService-info.plist
+/ios/Runner/GoogleService-Info.plist
 /ios/ExportOptions.plist
 
 
@@ -64,6 +64,15 @@ app.*.map.json
 #fastlane
 /ios/fastlane/.env
 /ios/fastlane/store.json
+/ios/fastlane/*.p8
+/ios/fastlane/report.xml
+/ios/Runner.app.dSYM.zip
+/ios/Runner.ipa
+/ios/vendor/bundle/
+/android/fastlane/.env
+/android/fastlane/play-service-account.json
+/android/fastlane/report.xml
+/android/vendor/bundle/
 /.vscode/tasks.json
 /.vscode/settings.json
 
@@ -71,6 +80,14 @@ app.*.map.json
 
 
 !/.gitignore
-/env/**/**
-!/env/**/.gitkeep
+/env/dev/*
+!/env/dev/.gitkeep
+!/env/dev/fastlane/
+/env/dev/fastlane/*
+!/env/dev/fastlane/.gitkeep
+/env/prod/*
+!/env/prod/.gitkeep
+!/env/prod/fastlane/
+/env/prod/fastlane/*
+!/env/prod/fastlane/.gitkeep
 /lib/config.dart

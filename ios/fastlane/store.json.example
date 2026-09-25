@@ -1,0 +1,5 @@
+{
+  "key_id": "REPLACE_WITH_APP_STORE_CONNECT_KEY_ID",
+  "issuer_id": "REPLACE_WITH_APP_STORE_CONNECT_ISSUER_ID",
+  "key_filepath": "./AuthKey_REPLACE_WITH_KEY_ID.p8"
+}
