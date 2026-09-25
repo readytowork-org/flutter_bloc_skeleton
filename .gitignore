@@ -18,8 +18,6 @@ migrate_working_dir/
 *.iws
 .idea/
 
-
-
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
@@ -47,7 +45,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-
 # google sheet 
 /google_sheet.json
 /firebase.json
@@ -56,10 +53,7 @@ app.*.map.json
 /ios/Runner/GoogleService-Info.plist
 /ios/ExportOptions.plist
 
-
 /lib/firebase_options.dart
-
-
 
 #fastlane
 /ios/fastlane/.env
@@ -76,9 +70,6 @@ app.*.map.json
 /.vscode/tasks.json
 /.vscode/settings.json
 
-
-
-
 !/.gitignore
 /env/dev/*
 !/env/dev/.gitkeep
@@ -91,3 +82,6 @@ app.*.map.json
 /env/prod/fastlane/*
 !/env/prod/fastlane/.gitkeep
 /lib/config.dart
+
+# FVM Version Cache
+.fvm/
