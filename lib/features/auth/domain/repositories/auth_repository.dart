@@ -9,7 +9,6 @@ abstract class AuthRepository {
     String email,
     String password,
   );
-  Future<ApiResult<TokenEntity>> refreshToken(String token);
   Future<ApiResult<TokenEntity>> getCurrentSession();
   Future<ApiResult<String>> logout();
 }

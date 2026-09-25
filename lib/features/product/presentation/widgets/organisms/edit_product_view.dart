@@ -28,8 +28,8 @@ class _EditProductViewState extends State<EditProductView> {
     BuildContext context,
     EditProductState state,
   ) {
-    state.maybeWhen(
-      success: (product) {
+    switch (state) {
+      case EditProductSuccess(:final product):
         context.read<GetProductByIdBloc>().add(
           GetProductByIdEvent.productUpdatedLocally(product: product),
         );
@@ -38,10 +38,11 @@ class _EditProductViewState extends State<EditProductView> {
         );
         context.showSnackBar('✅ Product updated successfully!');
         context.pop();
-      },
-      failure: (message) => context.showSnackBar(message),
-      orElse: () {},
-    );
+      case EditProductFailure(:final message):
+        context.showSnackBar(message);
+      default:
+        break;
+    }
   }
 
   void onEditProductButtonPressed(EditProductBloc bloc) {

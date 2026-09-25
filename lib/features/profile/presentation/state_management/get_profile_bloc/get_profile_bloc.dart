@@ -1,20 +1,18 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../../core/network/api_result.dart';
 import '../../../../../shared/state/base_state.dart';
 import '../../../../auth/domain/entities/user_entity.dart';
-import '../../../domain/usecases/profile_usecae.dart';
+import '../../../domain/repository/profile_repository.dart';
 
 part 'get_profile_event.dart';
 part 'get_profile_state.dart';
-part 'get_profile_bloc.freezed.dart';
 
 class GetProfileBloc extends Bloc<GetProfileEvent, GetProfileState> {
-  final ProfileUseCase _profileUseCase;
+  final ProfileRepository _repository;
 
-  GetProfileBloc({required ProfileUseCase profileUseCase})
-    : _profileUseCase = profileUseCase,
+  GetProfileBloc({required ProfileRepository repository})
+    : _repository = repository,
       super(GetProfileState.initial()) {
     on<GetProfileRequested>(_onGetProfileRequested);
   }
@@ -22,7 +20,7 @@ class GetProfileBloc extends Bloc<GetProfileEvent, GetProfileState> {
     GetProfileRequested event,
     Emitter<GetProfileState> emit,
   ) async {
-    final result = await _profileUseCase();
+    final result = await _repository.getProfile();
 
     result.when(
       success: (res) => emit(GetProfileState.loaded(res: res)),

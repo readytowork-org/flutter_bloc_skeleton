@@ -1,23 +1,21 @@
 import 'dart:developer';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../../core/network/api_result.dart';
 import '../../../../../shared/state/base_state.dart';
 import '../../../domain/entities/product_entity.dart';
-import '../../../domain/usecases/get_product_by_id_usecase.dart';
+import '../../../domain/repository/product_repository.dart';
 
 part 'get_product_by_id_event.dart';
 part 'get_product_by_id_state.dart';
-part 'get_product_by_id_bloc.freezed.dart';
 
 class GetProductByIdBloc
     extends Bloc<GetProductByIdEvent, GetProductByIdState> {
-  final GetProductByIdUseCase _productUsecase;
+  final ProductRepository _repository;
 
-  GetProductByIdBloc({required GetProductByIdUseCase productUsecase})
-    : _productUsecase = productUsecase,
+  GetProductByIdBloc({required ProductRepository repository})
+    : _repository = repository,
       super(GetProductByIdState.initial()) {
     on<GetProductByIdRequested>(_onGetProductByIdRequested);
     on<ProductUpdatedLocally>(_updateProductLocally);
@@ -35,7 +33,7 @@ class GetProductByIdBloc
       emit(const GetProductByIdState.loading());
     }
 
-    final result = await _productUsecase(event.id);
+    final result = await _repository.getProductById(event.id);
 
     result.when(
       success: (res) => emit(GetProductByIdState.loaded(res: res)),

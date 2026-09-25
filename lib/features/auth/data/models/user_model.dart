@@ -1,27 +1,41 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/user_entity.dart';
 
-part 'user_model.freezed.dart';
-part 'user_model.g.dart';
+class UserModel {
+  const UserModel({
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.gender,
+    required this.image,
+    this.accessToken,
+    this.refreshToken,
+  });
 
-@freezed
-abstract class UserModel with _$UserModel {
-  const factory UserModel({
-    required int id,
-    required String username,
-    required String email,
-    required String firstName,
-    required String lastName,
-    required String gender,
-    required String image,
-    String? accessToken,
-    String? refreshToken,
-  }) = _UserModel;
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'] as int,
+      username: json['username'] as String,
+      email: json['email'] as String,
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
+      gender: json['gender'] as String,
+      image: json['image'] as String,
+      accessToken: json['accessToken'] as String?,
+      refreshToken: json['refreshToken'] as String?,
+    );
+  }
 
-  const UserModel._();
-
-  factory UserModel.fromJson(Map<String, dynamic> json) =>
-      _$UserModelFromJson(json);
+  final int id;
+  final String username;
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String gender;
+  final String image;
+  final String? accessToken;
+  final String? refreshToken;
 
   UserEntity toEntity() => UserEntity(
     username: username,

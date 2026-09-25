@@ -1,6 +1,6 @@
 import 'dart:async';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../core/network/api_result.dart';
 import '../../core/utils/enum/index.dart';
@@ -8,7 +8,6 @@ import '../models/pagination_params.dart';
 
 part 'pagination_event.dart';
 part 'pagination_state.dart';
-part 'base_pagination_bloc.freezed.dart';
 
 abstract class BasePaginationBloc<T>
     extends Bloc<PaginationEvent, PaginationState<T>> {

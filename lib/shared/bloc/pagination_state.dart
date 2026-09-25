@@ -1,11 +1,32 @@
 part of 'base_pagination_bloc.dart';
 
-@Freezed(genericArgumentFactories: true)
-abstract class PaginationState<T> with _$PaginationState<T> {
-  const factory PaginationState({
-    @Default([]) List<T> data,
-    @Default(PaginationStatus.initial) PaginationStatus status,
+final class PaginationState<T> extends Equatable {
+  const PaginationState({
+    this.data = const [],
+    this.status = PaginationStatus.initial,
+    this.error,
+    this.hasReachedMax = false,
+  });
+
+  final List<T> data;
+  final PaginationStatus status;
+  final String? error;
+  final bool hasReachedMax;
+
+  PaginationState<T> copyWith({
+    List<T>? data,
+    PaginationStatus? status,
     String? error,
-    @Default(false) bool hasReachedMax,
-  }) = _PaginationState;
+    bool? hasReachedMax,
+  }) {
+    return PaginationState<T>(
+      data: data ?? this.data,
+      status: status ?? this.status,
+      error: error ?? this.error,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+    );
+  }
+
+  @override
+  List<Object?> get props => [data, status, error, hasReachedMax];
 }

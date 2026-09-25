@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 
 import '../../config.dart';
 import '../storage/token_storage.dart';
-import 'auth_interceptor.dart';
 import 'jwt_interceptor.dart';
 
 class DioClient {
@@ -36,7 +35,6 @@ class DioClient {
         responseBody: true,
         error: true,
       ),
-      DioAuthInterceptor(),
       JwtInterceptor(
         dio: _dio,
         tokenStorage: tokenStorage,

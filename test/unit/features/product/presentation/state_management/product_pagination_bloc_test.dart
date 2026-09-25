@@ -3,26 +3,26 @@ import 'package:flutter_bloc_skeleton/core/error/failures.dart';
 import 'package:flutter_bloc_skeleton/core/network/api_result.dart';
 import 'package:flutter_bloc_skeleton/core/utils/enum/index.dart';
 import 'package:flutter_bloc_skeleton/features/product/domain/entities/product_entity.dart';
-import 'package:flutter_bloc_skeleton/features/product/domain/usecases/get_all_product_usecase.dart';
+import 'package:flutter_bloc_skeleton/features/product/domain/repository/product_repository.dart';
 import 'package:flutter_bloc_skeleton/features/product/presentation/state_management/get_all_products_bloc/product_pagination_bloc.dart';
 import 'package:flutter_bloc_skeleton/shared/bloc/base_pagination_bloc.dart';
 import 'package:flutter_bloc_skeleton/shared/models/pagination_params.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetAllProductsUseCase extends Mock implements GetAllProductsUseCase {}
+class MockProductRepository extends Mock implements ProductRepository {}
 
 void main() {
   late ProductPaginationBloc bloc;
-  late MockGetAllProductsUseCase mockUseCase;
+  late MockProductRepository mockRepository;
 
   setUpAll(() {
     registerFallbackValue(PaginationParams(page: 1, pageSize: 20));
   });
 
   setUp(() {
-    mockUseCase = MockGetAllProductsUseCase();
-    bloc = ProductPaginationBloc(productUsecase: mockUseCase);
+    mockRepository = MockProductRepository();
+    bloc = ProductPaginationBloc(repository: mockRepository);
   });
 
   tearDown(() {
@@ -54,7 +54,7 @@ void main() {
     'emits [loading, success] when fetchItems succeeds',
     build: () {
       when(
-        () => mockUseCase.call(any()),
+        () => mockRepository.getAllProducts(any()),
       ).thenAnswer((_) async => ApiResult.success(tProductResponseEntity));
       return bloc;
     },
@@ -68,14 +68,14 @@ void main() {
       ),
     ],
     verify: (_) {
-      verify(() => mockUseCase.call(any())).called(1);
+      verify(() => mockRepository.getAllProducts(any())).called(1);
     },
   );
 
   blocTest<ProductPaginationBloc, PaginationState<ProductEntity>>(
     'emits [loading, failure] when fetchItems fails',
     build: () {
-      when(() => mockUseCase.call(any())).thenAnswer(
+      when(() => mockRepository.getAllProducts(any())).thenAnswer(
         (_) async => const ApiResult<ProductResponseEntity>.failure(
           ServerFailure('Error'),
         ),

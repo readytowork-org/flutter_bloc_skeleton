@@ -20,14 +20,15 @@ class _AddProductViewState extends State<AddProductView> {
   final formKey = GlobalKey<FormBuilderState>();
 
   void onAddProductStateListener(BuildContext context, AddProductState state) {
-    state.maybeWhen(
-      success: (product) {
+    switch (state) {
+      case AddProductSuccess(:final product):
         context.showSnackBar('✅ Product added: ${product.title}');
         context.pop();
-      },
-      failure: (message) => context.showSnackBar(message),
-      orElse: () {},
-    );
+      case AddProductFailure(:final message):
+        context.showSnackBar(message);
+      default:
+        break;
+    }
   }
 
   void onAddProductButtonPressed(AddProductBloc bloc) {

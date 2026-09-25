@@ -1,21 +1,49 @@
 part of 'get_profile_bloc.dart';
 
-@freezed
-class GetProfileState with _$GetProfileState implements BaseState {
-  @Implements<BaseInitial>()
+sealed class GetProfileState extends Equatable implements BaseState {
+  const GetProfileState();
+
   const factory GetProfileState.initial() = ProfileInitial;
-
-  @Implements<BaseLoading>()
   const factory GetProfileState.loading() = ProfileLoading;
-
-  @Implements<BaseLoaded<UserEntity>>()
   const factory GetProfileState.loaded({required UserEntity res}) =
       ProfileLoaded;
-
-  @Implements<BaseFailure>()
   const factory GetProfileState.failure({required String message}) =
       ProfileFailure;
-
-  @Implements<BaseEmpty>()
   const factory GetProfileState.empty() = ProfileEmpty;
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class ProfileInitial extends GetProfileState implements BaseInitial {
+  const ProfileInitial();
+}
+
+final class ProfileLoading extends GetProfileState implements BaseLoading {
+  const ProfileLoading();
+}
+
+final class ProfileLoaded extends GetProfileState
+    implements BaseLoaded<UserEntity> {
+  const ProfileLoaded({required this.res});
+
+  @override
+  final UserEntity res;
+
+  @override
+  List<Object?> get props => [res];
+}
+
+final class ProfileFailure extends GetProfileState implements BaseFailure {
+  const ProfileFailure({required this.message});
+
+  @override
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
+}
+
+final class ProfileEmpty extends GetProfileState implements BaseEmpty {
+  const ProfileEmpty();
 }

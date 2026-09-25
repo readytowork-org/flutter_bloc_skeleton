@@ -1,21 +1,49 @@
 part of 'get_product_by_id_bloc.dart';
 
-@freezed
-class GetProductByIdState with _$GetProductByIdState implements BaseState {
-  @Implements<BaseInitial>()
+sealed class GetProductByIdState extends Equatable implements BaseState {
+  const GetProductByIdState();
+
   const factory GetProductByIdState.initial() = ProductInitial;
-
-  @Implements<BaseLoading>()
   const factory GetProductByIdState.loading() = ProductLoading;
-
-  @Implements<BaseLoaded<ProductEntity>>()
   const factory GetProductByIdState.loaded({required ProductEntity res}) =
       ProductLoaded;
-
-  @Implements<BaseFailure>()
   const factory GetProductByIdState.failure({required String message}) =
       ProductFailure;
-
-  @Implements<BaseEmpty>()
   const factory GetProductByIdState.empty() = ProductEmpty;
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class ProductInitial extends GetProductByIdState implements BaseInitial {
+  const ProductInitial();
+}
+
+final class ProductLoading extends GetProductByIdState implements BaseLoading {
+  const ProductLoading();
+}
+
+final class ProductLoaded extends GetProductByIdState
+    implements BaseLoaded<ProductEntity> {
+  const ProductLoaded({required this.res});
+
+  @override
+  final ProductEntity res;
+
+  @override
+  List<Object?> get props => [res];
+}
+
+final class ProductFailure extends GetProductByIdState implements BaseFailure {
+  const ProductFailure({required this.message});
+
+  @override
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
+}
+
+final class ProductEmpty extends GetProductByIdState implements BaseEmpty {
+  const ProductEmpty();
 }
