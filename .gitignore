@@ -82,6 +82,11 @@ app.*.map.json
 /env/prod/fastlane/*
 !/env/prod/fastlane/.gitkeep
 /lib/config.dart
+/env/local/*
+!/env/local/.gitkeep
+/env/local/fastlane/*
+!/env/local/fastlane/.gitkeep
 
 # FVM Version Cache
-.fvm/
+.fvm/key.properties
+*.jks
