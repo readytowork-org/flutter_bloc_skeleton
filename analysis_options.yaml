@@ -17,6 +17,14 @@ analyzer:
     control_flow_in_finally: error
     deprecated_member_use_from_same_package: error
     require_trailing_commas: error
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:
