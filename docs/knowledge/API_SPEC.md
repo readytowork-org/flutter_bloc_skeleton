@@ -56,7 +56,7 @@ Data Sources throw typed low-level exceptions (`AppException` hierarchy). Reposi
 | :--- | :--- |
 | `NetworkException` | No connectivity or timeout |
 | `ServerException` | Server-side error (carries optional `statusCode`) |
-| `UnauthorizedException` | 401 from server |
+| `UnauthorizedException` | Unauthorized access (general-purpose, not tied to HTTP 401) |
 | `RefreshTokenExpiredException` | Refresh token is no longer valid |
 | `StorageException` | Secure storage read/write failure |
 
@@ -89,7 +89,9 @@ Data Sources throw typed low-level exceptions (`AppException` hierarchy). Reposi
 
 ## 3. Repository Error Handling Standard
 
-Repository implementations enforce the exception-to-failure boundary using `ApiResult<T>` (Freezed union):
+Repository implementations enforce the exception-to-failure boundary using `ApiResult<T>` (Freezed union). Two patterns exist in the codebase:
+
+### Pattern A — Generic catch (Auth, Profile)
 
 ```dart
 @override
@@ -97,17 +99,27 @@ Future<ApiResult<UserEntity>> getUserProfile(String userId) async {
   try {
     final userModel = await remoteDataSource.getUserProfile(userId);
     return ApiResult.success(userModel.toEntity());
-  } on ServerException catch (e) {
-    return ApiResult.failure(ServerFailure(e.message));
-  } on UnauthorizedException {
-    return const ApiResult.failure(UnauthorizedFailure());
-  } on NetworkException {
-    return const ApiResult.failure(NetworkFailure());
   } catch (e) {
-    return ApiResult.failure(UnknownFailure());
+    return ApiResult.failure(ServerFailure(e.toString()));
   }
 }
 ```
+
+### Pattern B — DioException mapping (Product)
+
+```dart
+@override
+Future<ApiResult<ProductEntity>> getProductById(String id) async {
+  try {
+    final productModel = await remoteDataSource.getProductById(id);
+    return ApiResult.success(productModel.toEntity());
+  } on DioException catch (e) {
+    return ApiResult.failure(handleDioError(e));
+  }
+}
+```
+
+**Note:** The `AppException` hierarchy is defined but not currently caught in repository implementations. New repositories should follow Pattern B (DioException + `handleDioError`) for more granular failure mapping.
 
 ### ApiResult Union (`lib/core/network/api_result.dart`)
 
@@ -140,7 +152,7 @@ result.when(
 
 | Interceptor | Purpose |
 | :--- | :--- |
-| `LogInterceptor` | Logs requests, responses, and errors (debug mode) |
+| `LogInterceptor` | Logs requests, responses, and errors (unconditionally) |
 | `DioAuthInterceptor` | Attaches JWT Bearer token to outgoing headers (legacy) |
 | `JwtInterceptor` | Single-flight token refresh with request queuing; handles session expiration |
 
