@@ -22,6 +22,7 @@ Use this playbook when explicitly invoked as `/feature` or named as the `feature
 ## 3. Presentation — `lib/features/<feature>/presentation/`
 
 - Add explicit events and immutable initial/loading/success/failure states as the flow requires under `presentation/state_management/`. BLoCs call use cases and handle both `ApiResult` branches.
+- **Code generation is mandatory.** After creating or editing any `@freezed` event or state class, run `make generate` to produce the `*.freezed.dart` part file. Never hand-edit generated files.
 - Build a page with focused widgets. Place `BlocProvider` at the page or route boundary, matching neighboring code; use `BlocBuilder` or `BlocConsumer` for state-driven UI.
 
 ## 4. DI and routing

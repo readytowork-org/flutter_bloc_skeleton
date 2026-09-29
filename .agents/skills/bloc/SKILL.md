@@ -11,6 +11,8 @@ Use this playbook for feature state-management changes. Read the affected BLoC, 
 
 Define events for user intent, such as a fetch or submit request. Use immutable Freezed unions or Equatable states, matching the existing BLoC. Represent initial, loading, success, failure, and empty states only where behavior needs them. Keep success data and failure messages in state payloads.
 
+**Code generation is mandatory.** After creating or editing any `@freezed` event or state class, run `make generate` to produce the `*.freezed.dart` part file. Never hand-edit generated files.
+
 ## 2. Transitions
 
 Register event handlers with `on<EventType>`. Emit loading, call the injected use case, and handle both branches of `ApiResult<T>` with `result.when(success: ..., failure: ...)`. Emit domain data on success and a useful failure state on failure. Guard duplicate or stale responses when relevant. Close owned subscriptions/controllers and never mutate emitted state collections.
