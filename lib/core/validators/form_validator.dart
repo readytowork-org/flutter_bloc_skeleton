@@ -7,9 +7,11 @@ class FormValidator {
       FormBuilderValidators.compose([
         FormBuilderValidators.required(errorText: "full name is required"),
       ]);
-  static final FormFieldValidator<String> email = FormBuilderValidators.compose(
-    [FormBuilderValidators.required(errorText: "email is required")],
-  );
+  static final FormFieldValidator<String> email =
+      FormBuilderValidators.compose([
+        FormBuilderValidators.required(errorText: "email is required"),
+        FormBuilderValidators.email(errorText: "enter a valid email address"),
+      ]);
   static final FormFieldValidator<String> password =
       FormBuilderValidators.compose([
         FormBuilderValidators.required(errorText: "password is required"),

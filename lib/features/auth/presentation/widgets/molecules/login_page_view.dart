@@ -41,6 +41,10 @@ class _LoginPageViewState extends State<LoginPageView> {
     context.push(AuthRoute.register.path);
   }
 
+  void onForgotPasswordPressed() {
+    context.push(AuthRoute.forgotPassword.path);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,7 +143,7 @@ class _LoginPageViewState extends State<LoginPageView> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: onForgotPasswordPressed,
                             child: const Text(
                               'Forgot Password?',
                               style: TextStyle(color: AppColors.secondary),

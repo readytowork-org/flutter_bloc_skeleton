@@ -35,3 +35,7 @@ Use this playbook when explicitly invoked as `/feature` or named as the `feature
 - Follow `/codegen` when generated inputs change; run `make generate`, then review and include `*.freezed.dart` and `*.g.dart`. Run `flutter gen-l10n` for changed ARBs.
 - Add use-case unit tests and `blocTest` coverage for meaningful success/failure emissions under `test/unit/features/`. Add widget tests for new interactions under `test/widget/features/`.
 - Run focused tests, `dart format --output=none --set-exit-if-changed lib test`, and `flutter analyze`. Report what changed by layer and which checks passed or could not run.
+
+## 6. Update spec
+
+- Create or update the feature spec in  docs/specs/<<feature>>/<feature>.md with the new flow, entities, and API contract. Include a diagram of the BLoC state machine if it is non-trivial.
