@@ -24,6 +24,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<void> forgotPassword(String email) async {
+    await _dioClient.post(ApiEndpoints.forgotPassword, data: {'email': email});
+  }
+
+  @override
   Future<TokenEntity> refreshToken(String token) async {
     final response = await _dioClient.post(
       ApiEndpoints.refreshToken,

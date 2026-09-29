@@ -1,11 +1,16 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_skeleton/features/auth/presentation/widgets/molecules/login_page_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:flutter_bloc_skeleton/features/auth/presentation/state_management/auth_bloc.dart';
+import 'package:flutter_bloc_skeleton/features/auth/presentation/routes/auth_route_paths.dart';
+import 'package:flutter_bloc_skeleton/features/auth/presentation/routes/auth_routes.dart';
+import 'package:flutter_bloc_skeleton/l10n/s.dart';
 
 import '../../../../helpers/test_helpers.dart';
 
@@ -37,6 +42,38 @@ void main() {
       expect(find.text('Welcome Back 👋'), findsOneWidget);
       expect(find.text('Login'), findsOneWidget);
       expect(find.text('Register'), findsOneWidget);
+    });
+
+    testWidgets('Forgot Password link opens the password recovery screen', (
+      tester,
+    ) async {
+      final router = GoRouter(
+        initialLocation: AuthRoute.login.path,
+        routes: AuthRoutes.routes,
+      );
+      await tester.pumpWidget(
+        BlocProvider<AuthBloc>.value(
+          value: mockAuthBloc,
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: S.localizationsDelegates,
+            supportedLocales: S.supportedLocales,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Forgot Password?'));
+      await tester.tap(find.text('Forgot Password?'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          'Enter your email address and we’ll send you a link to reset your password.',
+        ),
+        findsOneWidget,
+      );
+      router.dispose();
     });
 
     // ── Form validation guard ─────────────────────────────────────────────────
