@@ -47,19 +47,7 @@ Dates identify the introducing commit or historical milestone. Notes describe ob
 
 | Date | Decision | Why / notes |
 | :--- | :--- | :--- |
-| 2023-03-21 | Establish a Flutter BLoC skeleton | Initial repository commit `5f9c8c3`; foundation for a reusable application. |
-| 2024-04-29 | Add Makefile-based development tasks | `5926aeb`; central entry points for repeatable local commands. |
-| 2024-04-30 | Introduce GetIt and shared Dio/interceptor setup | `cf27e09`, `381b35a`; central dependency composition and networking infrastructure. |
-| 2024-05-02 | Introduce reusable pagination state and widgets | `3bc8a33` and related commits; shared list loading behavior. |
-| 2024-10-06 | Add commit-message and maintenance hooks | `7ab4a55`, `df5b9d8`; current hooks enforce Conventional Commits and run formatting, analysis, and fixes. |
-| 2025-12-09 | Adopt feature-based organization | `9e23661`, PR #1; group implementation by feature rather than only by technical layer. |
-| 2026-04-09 | Add the current `ApiResult<T>` source | Introduced in `d0ccc11`; typed success/failure contracts now shared by repositories and use cases. |
-| 2026-05-05 | Move app localization to ARBs with locale switching | `2c033f2`; Flutter-generated localization becomes the application workflow. |
-| 2026-05-09 | Abstract secure token storage | `3890a16`; `TokenStorage` separates consumers from secure persistence implementation. |
-| 2026-05-10 | Consolidate application routing and token lifecycle wiring | `fca75c1`; `AppRouter` and secure token storage changes coordinate navigation/session behavior. |
-| 2026-05-14 | Integrate OneSignal and reorganize tests | `c373564`, `2d8f8d8`; notification integration plus explicit unit/widget/integration organization. |
-| 2026-09-28 | Pin Flutter to 3.47.1 | `9e589e4`, PR #21; current local SDK baseline. Build workflows still use 3.41.4. |
-| 2026-09-29 | Maintain a shared AI contributor contract and project memory | Working-tree documentation, not committed: `AGENTS.md` records 12 guidance sections; `MEMORY.md` records verified history and pending work. |
+| 2023-03-21 | Establish a Flutter BLoC skeleton | Initial repository commit `5f9c8c3`; 
 
 ---
 
@@ -69,23 +57,6 @@ Grouped milestones cover the available history without treating every commit as 
 
 | Date | PR / branch | What landed |
 | :--- | :--- | :--- |
-| 2023-03-21 | `5f9c8c3` / history reachable from `main` | Initial Flutter BLoC skeleton. |
-| 2024-04-29 | `5926aeb`–`cc45789` | Makefile, lint/package updates, login/register views, auth repository/service, and auth BLoC. |
-| 2024-04-30 | `9bd85ab`–`381b35a` | BLoC observer, GetIt, validation, themes, routing, root widget, and Dio/interceptors. |
-| 2024-05-02 | `6ed5ed3`–`6646b5d` | Pagination models/BLoC/widgets, refresh lists, post service, setup fixes, and documentation updates. |
-| 2024-05-20 | `a07b531`–`965aa0e` | Firebase ID-token refresh, GitHub Actions work, Java/format fixes, and responsive layout changes. |
-| 2024-10-01–2024-10-06 | `01209a7`–`fbe1e4a` | App extensions, Git hooks, Makefile updates, platform maintenance, and CI/build configuration changes. |
-| 2024-12-11 | `e7b2a6d`, `727b9ad`, `ad0f5f6` | Code refactor and README updates. |
-| 2025-01-14–2025-01-19 | `b1540fb`–`e861a96` | API authentication, login UI, theme update, and Android activity work. |
-| 2025-04-15–2025-04-29 | `2724ebe`–`ea1d8af` | Auth/API/theme refactors, repositories, Firebase messaging initialization, Sheets translation tooling, and documentation updates. |
-| 2025-12-09 | PR #1 / `feature-based` | Feature-based project structure merged. |
-| 2026-04-09 | PR #2 / `swagger-gen` | Authentication/pagination widgets and supporting functionality; current `ApiResult` source introduced. |
-| 2026-04-11 | PR #3 / `swagger-gen` | Signup use case, auth event/state changes, validated inputs, product data sources/repository, and product pagination integration. |
-| 2026-05-05–2026-05-06 | PR #4 / `swagger-gen` | ARB localization, locale switching, and cart routing/UI/localization changes. |
-| 2026-05-06 | PR #5 / `dynamic-link`; PR #6 / `assets-generator` | Platform link configuration and asset-generation tooling merged; later repository state must be checked before using historical commands. |
-| 2026-05-06–2026-05-10 | `d376126`–`fca75c1` | Pagination callbacks/scroll handling, secure token storage, logout, product fetching/add/edit/search/category/detail UI, splash/icons, and routing updates. |
-| 2026-05-11 | PR #7 / `pr-guide`; PR #8 and #9 / `profile-feature` | PR template and profile data sources, UI, and state management; localization workflow improvements. |
-| 2026-05-11–2026-05-14 | `43af67d`–`324b400`; PR #11 / `auto/update-translation` | Translation workflow fixes, Firebase/setup integration, endpoint constants, OneSignal, reorganized tests/integration tests, and request-body/API generator improvements. |
 | 2026-07-21 | PR #18 / `fix/updates` | Architecture updates and cart fixes (`8f4c959`, `51e6eac`). |
 | 2026-07-22 | `60c8133` | FCM package update. |
 | 2026-09-25 | PR #20 / `fix/fastlane` | Fastlane setup guide update. |
