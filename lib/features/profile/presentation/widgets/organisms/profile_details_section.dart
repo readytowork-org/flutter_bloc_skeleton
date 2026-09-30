@@ -50,15 +50,6 @@ class ProfileDetailsSection extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // BlocListener<AuthBloc, AuthState>(
-
-            //   child: IconButton(
-            //     onPressed: () async {
-            //       context.read<AuthBloc>().add(LogoutRequested());
-            //     },
-            //     icon: const Icon(Icons.logout_outlined),
-            //   ),
-            // ),
             AppBlocButton<AuthBloc, AuthState>(
               bloc: context.read<AuthBloc>(),
               label: "Logout",

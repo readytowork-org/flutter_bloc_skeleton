@@ -8,6 +8,7 @@ import 'data/datasources/auth_remote_datasource_impl.dart';
 import 'data/repositories/auth_repository_impl.dart';
 import 'domain/repositories/auth_repository.dart';
 import 'domain/usecases/login_usecase.dart';
+import 'domain/usecases/forgot_password_usecase.dart';
 import 'domain/usecases/logout_usecase.dart';
 import 'domain/usecases/refresh_token_usecase.dart';
 import 'domain/usecases/session_usecase.dart';
@@ -27,6 +28,7 @@ void initAuth() {
 
   // Use cases
   sl.registerLazySingleton(() => LoginUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ForgotPasswordUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => SignupUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => SessionUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
@@ -37,6 +39,7 @@ void initAuth() {
   sl.registerLazySingleton(
     () => AuthBloc(
       loginUseCase: sl<LoginUseCase>(),
+      forgotPasswordUseCase: sl<ForgotPasswordUseCase>(),
       signupUseCase: sl<SignupUseCase>(),
       sessionUseCase: sl<SessionUseCase>(),
       logoutUseCase: sl<LogoutUseCase>(),

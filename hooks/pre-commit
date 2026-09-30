@@ -14,15 +14,13 @@ NC='\033[0m' # No Color
 
 echo "${BLUE}Running Dart Format...${NC}"
 echo  " "
-dart format . --set-exit-if-changed lib/
+dart format --set-exit-if-changed lib test
 
 echo "${BLUE}Running Flutter Analyzer...${NC}"
 echo  " "
-flutter analyze
+flutter analyze lib test
 
 echo "${BLUE}Running dart fix --apply...${NC}"
 echo  " "
 dart fix --apply
-
-
 
