@@ -1,4 +1,4 @@
-import 'app/core/utils/enum/index.dart';
+import 'core/utils/enum/index.dart';
 
 class Config {
   static const baseUrl = "https://dummyjson.com";

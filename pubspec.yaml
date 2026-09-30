@@ -5,38 +5,71 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.4.0 <4.0.0"
+  sdk: ^3.10.3
 
 dependencies:
   flutter:
     sdk: flutter
 
-  dio: ^5.7.0
+  dio: ^5.8.0+1
   equatable: ^2.0.7
-  flutter_bloc: ^9.0.0
-  easy_localization: ^3.0.7
-  go_router: ^14.6.3
-  get_it: ^8.0.3
-  shared_preferences: ^2.3.5
-  flutter_form_builder: ^9.7.0
-  form_builder_validators: ^11.1.1
+  flutter_bloc: ^9.1.1
+  go_router: ^17.0.0
+  get_it: ^9.2.0
+  shared_preferences: ^2.5.3
+  flutter_form_builder: ^10.0.1
+  form_builder_validators: ^11.1.2
   cupertino_icons: ^1.0.8
-  fpdart: ^1.1.1
   dio_cache_interceptor: ^3.5.1
   path_provider: ^2.1.5
-  firebase_auth: ^5.4.0
-  firebase_core: ^3.10.0
   dio_cache_interceptor_hive_store: ^4.0.0
   flutter_screenutil: ^5.9.3
+  flutter_secure_storage: ^9.2.4
+  gsheets: ^0.5.0
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+  firebase_push_notification_module:
+    git:
+      url: https://github.com/Aashish-Dahal/fcm_module.git
+      ref: develop
+  flutter_hooks: ^0.21.3+1
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  firebase_crashlytics: ^5.2.2
+  firebase_core: ^4.7.0
+  firebase_auth: ^6.4.0
+  cloud_firestore: ^6.3.0
+  firebase_messaging: ^16.2.0
+  flutter_native_splash: ^2.4.7
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
 
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.11
+  freezed: ^3.2.5
+  json_serializable: ^6.8.0
+  mocktail: ^1.0.5
+  bloc_test: ^10.0.0
+  mocktail_image_network: ^1.3.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+
+  # Adaptive icon (VERY IMPORTANT for Android game-style)
+  adaptive_icon_background: "assets/icons/app_icon.png"
+  adaptive_icon_foreground: "assets/icons/app_icon.png"
 
 flutter:
   uses-material-design: true
+  generate: true
 
   assets:
     - assets/translations/

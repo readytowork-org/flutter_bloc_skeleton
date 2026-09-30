@@ -7,12 +7,9 @@ analyzer:
     camel_case_extensions: error
     non_constant_identifier_names: error
     constant_identifier_names: error
-    directives_ordering: error
-    lines_longer_than_80_chars: error
     curly_braces_in_flow_control_structures: error
     avoid_dynamic_calls: error
     avoid_empty_else: error
-    avoid_returning_null_for_future: error
     avoid_types_as_parameter_names: error
     cancel_subscriptions: error
     collection_methods_unrelated_type: error
@@ -29,11 +26,8 @@ linter:
     library_prefixes: true
     non_constant_identifier_names: true
     constant_identifier_names: true
-    directives_ordering: true
-    lines_longer_than_80_chars: true
     curly_braces_in_flow_control_structures: true
     avoid_empty_else: true
-    avoid_returning_null_for_future: true
     avoid_types_as_parameter_names: true
     cancel_subscriptions: true
     collection_methods_unrelated_type: true

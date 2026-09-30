@@ -1,90 +1,199 @@
-# Flutter Bloc Skeleton
+## Folder Structure
 
-This is a skeleton project for Flutter that provides a basic structure and configuration to kickstart your Flutter application development.
-
-This project is a starting point for a Flutter application that follows the
-[Bloc State management tutorial](https://bloclibrary.dev/).
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials, samples, guidance on mobile development, and a
-full API reference.
-
-## Features
-
-- Boilerplate code and folder structure for a Flutter project.
-- Pre-configured dependencies and packages commonly used in Flutter development.
-- Example code and comments to help you get started quickly.
-
-## Getting Started
-
-These instructions will help you get a copy of the project up and running on your local machine for development and testing purposes.
-
-### Prerequisites
-
-Make sure you have Flutter installed on your machine. If you haven't installed Flutter yet, you can follow the official Flutter installation guide: [Flutter Installation Guide](https://flutter.dev/docs/get-started/install)
-
-### Installation
-
-1. Clone the repository to your local machine using the following command:
+The project follows a **Feature-First Clean Architecture** approach, ensuring separation of concerns and scalability.
 
 ```
-git clone https://github.com/Aashish-Dahal/flutter_bloc_skeleton
+lib/
+├── core/                # Global infrastructure (Independent of features)
+│   ├── di/              # Main Service Locator (GetIt)
+│   ├── error/           # Standardized Failures
+│   ├── network/         # Centralized Dio Client & Network Logic
+│   └── result/          # Freezed-based Result pattern (Success/Failure)
+├── features/            # Feature modules (Domain-specific logic)
+│   └── auth/            # Example: Auth Feature
+│       ├── data/        # Data Layer (Infrastructure)
+│       │   ├── datasources/  # API calls
+│       │   ├── models/       # DTOs (Freezed + JSON Serializer)
+│       │   └── repositories/ # Repository Implementations
+│       ├── domain/      # Domain Layer (Pure Business Logic)
+│       │   ├── entities/     # Pure Data Classes
+│       │   ├── repositories/ # Repository Interfaces
+│       │   └── usecases/     # Single-responsibility business actions
+│       ├── presentation/# Presentation Layer (UI & State)
+│       │   ├── bloc/         # Feature BLoC (Freezed states/events)
+│       │   ├── pages/        # Feature Screens
+│       │   ├── routes/       # Feature-specific Route Paths
+│       │   └── widgets/      # Feature-specific UI Components
+│       └── auth_di.dart # Feature-specific DI registration
+├── app/                 # Global App Config & Shared Components
+│   ├── core/            # App-level config
+│   │   └── config/      # Routes (GoRouter) and Theme Logic
+│   └── shared/          # Reusable UI & Logic across features
+│       └── widgets/     # Atomic Design (Atoms, Molecules, Organisms)
+└── main.dart            # Application Entry Point
 ```
 
-2. Change into the project directory using the following command:
+## Architectural Layers
 
+### 1. Domain Layer (Highest Level)
+- **Entities**: Pure Dart objects representing business data. No dependencies on JSON or external libraries.
+- **Repository Interfaces**: Abstract contracts defining data operations required by the business.
+- **Use Cases**: Single business actions (e.g., `LoginUseCase`). They only depend on repository interfaces and return `Result<T>`.
+
+### 2. Data Layer
+- **Models (DTOs)**: Freezed classes used for JSON serialization. Includes mappers (`toEntity()`) to convert DTOs to Domain Entities.
+- **Data Sources**: Handle raw data operations (e.g., calling Dio for REST APIs).
+- **Repositories**: Implementations of the Domain repository interfaces. They orchestrate data flow between sources and map data to entities.
+
+### 3. Presentation Layer
+- **BLoC**: Manages feature state using Freezed union types for Events and States. BLoCs only interact with Use Cases.
+- **Pages**: UI screens that consume BLoC states and render the final interface.
+- **Routes**: Feature-specific route definitions and path constants are encapsulated here to maintain modularity.
+- **Feature DI**: Each feature contains its own DI registration (e.g., `auth_di.dart`) to register its own BLoCs, UseCases, and Repositories into the global service locator.
+- **Atomic Design**: Shared and feature-specific widgets follow the Atomic Design pattern, organized into `Atoms`, `Molecules`, and `Organisms`.
+
+### 4. Core & App Layers
+- **Core**: Contains infrastructure code that is agnostic to any specific business feature (e.g., how we handle network requests or DI).
+- **App**: Handles app-level configuration like navigation and global themes, as well as shared components used by multiple features.
+
+## Architecture Flow
+
+The following diagram illustrates how data and events flow through the layers during a typical action:
+
+```mermaid
+sequenceDiagram
+    participant UI as UI (Pages/Widgets)
+    participant BLoC as BLoC (State Management)
+    participant UC as Use Case
+    participant RI as Repository Interface
+    participant RP as Repository Implementation
+    participant DS as Data Source (Remote/Local)
+    participant API as External API (REST)
+
+    UI->>BLoC: Add Event (e.g., LoginRequested)
+    activate BLoC
+    BLoC-->>UI: Emit State (Loading)
+    
+    BLoC->>UC: Execute (params)
+    activate UC
+    
+    UC->>RI: Call Method (repo.login)
+    activate RI
+    
+    RI->>DS: Fetch Data (dataSource.login)
+    activate DS
+    
+    DS->>API: HTTP Request (Dio.post)
+    API-->>DS: JSON Response
+    DS-->>RI: Return Model
+    deactivate DS
+    
+    RI-->>UC: Return Result<Entity>
+    deactivate RI
+    
+    UC-->>BLoC: Return Result<Entity>
+    deactivate UC
+    
+    BLoC-->>UI: Emit State (Authenticated / Failure)
+    deactivate BLoC
 ```
-cd flutter_bloc_skeleton
-```
 
-3. Run this command to set up the project:
+### Layer Responsibilities
 
-```
- make project-setup
- make flutter-clean
-```
+| Layer | Responsibility |
+| :--- | :--- |
+| **Presentation** | Captures input, triggers events, and renders state. |
+| **BLoC** | Orchestrates state transitions. It knows **what** to do but not **how**. |
+| **Domain (UC)** | Encapsulates a single business rule. |
+| **Data (Repo)** | The single source of truth. Orchestrates data sources. |
+| **Data (DS)** | Direct communication with APIs or Databases. |
 
-4. Run the project using the following command:
+---
 
-```
-  flutter run
-```
+## Technical Features
 
-This will launch the app on your connected device or emulator.
+### 1. Standardized Error Handling
+The project uses a unified `Result<T>` pattern for all asynchronous operations.
+- **Failures**: Standardized classes (e.g., `ServerFailure`, `NetworkFailure`, `ValidationFailure`) located in `lib/core/error/`.
+- **Global Error Reporting**: Uncaught errors and crashes are automatically reported to **Firebase Crashlytics** via the `main.dart` global error handlers.
 
-### Environments
+### 2. Network & API Integration
+- **DioClient**: A centralized HTTP client with pre-configured timeouts and response types.
+- **Interceptors**: 
+  - `DioAuthInterceptor`: Manages headers and authentication.
+  - `JwtInterceptor`: Handles automatic token refresh logic and session expiration detection.
+  - `LogInterceptor`: Comprehensive logging for debugging network requests in development.
+- **Dio Error Handling**: Centralized `handleDioError` utility converts HTTP errors into domain-specific `Failure` objects.
 
-Place the env files like `config.dart, google-services.json, GoogleService.plist` inside respective `env/<dev|prod>`
-folder.
+### 3. Atomic Design System
+UI components are organized by complexity to maximize reusability:
+- **Atoms**: Basic building blocks (Buttons, Inputs, Spacers).
+- **Molecules**: Groups of atoms functioning as a unit (Search fields, Product cards).
+- **Organisms**: Complex components that form distinct sections of a page (Product grids, Navigation bars).
 
-And you can run `make set-env-dev | make set-env-prod` in terminal to set the required environment files.
+### 4. Security & Persistence
+- **Token Storage**: Encrypted storage for sensitive session tokens using `flutter_secure_storage`.
+- **Local Storage**: Key-value persistence using `shared_preferences`.
+- **Cache Logic**: Network response caching implemented via `dio_cache_interceptor` with a Hive-based store for performance.
 
-### Material Theme Setup
+## Dependency Injection (GetIt)
 
-Use this Material Design 3 Theme Generator website to design themes for both dark and light modes.
+We use a modular DI approach:
+1. Feature-specific registrations happen in `feature_name_di.dart`.
+2. These are aggregated in `lib/core/di/service_locator.dart`.
+3. The main entry point calls `sl.init()` before the app starts.
 
-- [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
+## Code Generation
 
-## Coding Guidelines
+This project uses `freezed` and `json_serializable` for data modeling and BLoC state management.
 
-Additionally, utilize this article to enhance the quality of your code. This resource encompasses guidelines for naming conventions, code style and formatting, as well as other best practices.
+### Commands
+All common tasks (generation, watching, environment setup) are managed via the `makefile`. See the **Scripts & Automation** section below for a full list of commands.
 
-- [medium-article](https://medium.com/readytowork-org/flutter-best-practices-and-coding-guidelines-f494b1ad2369)
+## Key Packages
+- `flutter_bloc`: State management.
+- `freezed`: Immutable models and union types.
+- `get_it`: Dependency injection.
+- `dio`: HTTP client.
+- `go_router`: Navigation.
+- `flutter_localizations`: Native multi-language support (intl).
+- `mocktail` & `bloc_test`: Industry-standard testing tools.
+- `makefile`: Task runner for common project operations.
 
-## Usage
+## Scripts & Automation
 
-You can start building your Flutter application on top of this skeleton project. Modify or replace the existing code to fit your application's requirements. The skeleton project provides an example structure and initial code to get you started quickly.
+The project includes a suite of automation scripts (located in `scripts/`) and a `makefile` to streamline development tasks.
+
+### Makefile Commands
+
+| Command | Description |
+| :--- | :--- |
+| `make project-setup` | Full project initialization (Clean + Pub Get + Git Hooks). |
+| `make set-env-dev` | Configure environment for Development. |
+| `make set-env-prod` | Configure environment for Production. |
+| `make generate` | Run `build_runner` for one-time code generation. |
+| `make watch` | Run `build_runner` in watch mode. |
+| `make flutter-clean` | Clean build artifacts and fetch dependencies. |
+| `make flutter-fix` | Run dart formatter and apply automated fixes. |
+| `make swagger-gen` | Generate feature code from Swagger (requires `TAG` and `FILE`). |
+| `make setup-firebase` | Automated Firebase configuration helper. |
+| `make generate_dynamic_links` | Configure Android/iOS deep linking and dynamic links. |
+
+### Helper Scripts (`scripts/`)
+- `configure_links.sh`: Configures deep linking and generates site association files.
+- `generate_keystore.sh`: Automates Android keystore generation and properties setup.
+- `patch_gradle.sh`: Applies necessary patches to Android's `build.gradle` for production.
+- `set_env.sh`: Manages `.env` file switching across environments.
+- `setup_firebase.sh`: Streamlines Firebase CLI integration.
+- `setup_hooks.sh`: Installs project-specific Git hooks.
+
+---
 
 ## Testing
 
-The `test/` directory contains files and examples to help you write tests for your Flutter application. It is recommended to follow good testing practices and write unit, integration, and widget tests to ensure the stability and correctness of your code.
+For detailed instructions on our testing strategy, including templates for Unit, Widget, and Integration tests, please see [TESTING.md](TESTING.md).
 
-## Contributing
-
-Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue on the GitHub repository. If you'd like to contribute code, you can fork the repository, create a new branch, make your changes, and submit a pull request.
-
-Please make sure to follow the existing coding style and conventions in the project.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+### Quick Commands
+- **Run All Tests**: `flutter test`
+- **Unit Tests**: `flutter test test/unit`
+- **Widget Tests**: `flutter test test/widget`

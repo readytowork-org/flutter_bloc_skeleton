@@ -1,3 +1,31 @@
 {
-  "flutter_bloc_skeleton": "Flutter Bloc Skeleton"
+  "auth": {
+    "home": "Home",
+    "name": "Full Name",
+    "email_address": "Email Address",
+    "phone": "Phone",
+    "furigana": "Furigana",
+    "password": "Password"
+  },
+  "home": {
+    "product": "Product",
+    "product_name": "Product name",
+    "email_address": "Email Address",
+    "phone": "Phone",
+    "furigana": "Furigana"
+  },
+  "product": {
+    "product": "Product",
+    "product_name": "Product name",
+    "email_address": "Email Address",
+    "phone": "Phone",
+    "furigana": "Furigana"
+  },
+  "cart": {
+    "product": "Product",
+    "product_name": "Product name",
+    "email_address": "Email Address",
+    "phone": "Phone",
+    "furigana": "Furigana"
+  }
 }
