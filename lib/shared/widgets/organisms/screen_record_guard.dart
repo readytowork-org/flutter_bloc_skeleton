@@ -29,12 +29,6 @@ class _RecordingGuardState extends State<RecordingGuard> {
   StreamSubscription<ScreenshotSnapshot>? _streamSubscription;
   bool _isScreenRecordingActive = false;
 
-  ScreenshotSnapshot _latestSnapshot = ScreenshotSnapshot(
-    isScreenshotProtectionOn: false,
-    wasScreenshotTaken: false,
-    screenshotPath: '',
-  );
-
   @override
   void initState() {
     super.initState();
@@ -49,9 +43,7 @@ class _RecordingGuardState extends State<RecordingGuard> {
         "Screenshot stream event: wasTaken=${value.wasScreenshotTaken}, isRecording=${value.isScreenRecording}",
       );
 
-      setState(() {
-        _latestSnapshot = value;
-      });
+      setState(() {});
 
       if (value.wasScreenshotTaken) {
         debugPrint('Screenshot captured at path: ${value.screenshotPath}');
@@ -209,10 +201,10 @@ class _RecordingGuardState extends State<RecordingGuard> {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
+                      color: Colors.red.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.redAccent.withOpacity(0.5),
+                        color: Colors.redAccent.withValues(alpha: 0.5),
                         width: 2,
                       ),
                     ),
@@ -238,7 +230,7 @@ class _RecordingGuardState extends State<RecordingGuard> {
                     'For absolute security of your account and credentials, access to this screen is restricted while screen recording is active.\n\nPlease stop your recording to continue.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
                       height: 1.5,
                     ),

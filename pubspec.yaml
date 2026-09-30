@@ -44,7 +44,7 @@ dependencies:
   firebase_messaging: ^16.2.0
   flutter_native_splash: ^2.4.7
   flutter_launcher_icons: ^0.14.4
-  no_screenshot: ^1.1.0
+  no_screenshot: ^2.0.1
 
 dev_dependencies:
   flutter_test:
