@@ -1,0 +1,80 @@
+name: Manual TestFlight internal-only upload
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-testflight
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: macos-latest
+    steps:
+      - name: Require Slack notification webhook
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          test -n "$SLACK_WEBHOOK_URL" || { echo 'Missing repository secret: SLACK_WEBHOOK_URL' >&2; exit 1; }
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.4'
+          channel: stable
+          cache: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.0'
+          bundler-cache: true
+          working-directory: ios
+      - name: Prepare dev iOS configuration
+        env:
+          CONFIG_DART_BASE64: ${{ secrets.DEV_CONFIG_DART_BASE64 }}
+          FIREBASE_OPTIONS_BASE64: ${{ secrets.DEV_FIREBASE_OPTIONS_BASE64 }}
+          GOOGLE_SERVICE_PLIST_BASE64: ${{ secrets.DEV_GOOGLE_SERVICE_PLIST_BASE64 }}
+          ASC_JSON_KEY: ${{ secrets.DEV_ASC_JSON_KEY }}
+          ASC_P8_BASE64: ${{ secrets.DEV_ASC_P8_BASE64 }}
+          FASTLANE_ENV_BASE64: ${{ secrets.DEV_FASTLANE_ENV_BASE64 }}
+        run: |
+          set -euo pipefail
+          for name in CONFIG_DART_BASE64 FIREBASE_OPTIONS_BASE64 GOOGLE_SERVICE_PLIST_BASE64 ASC_JSON_KEY ASC_P8_BASE64 FASTLANE_ENV_BASE64; do
+            test -n "${!name}" || { echo "Missing secret: ${name}" >&2; exit 1; }
+          done
+          printf '%s' "$CONFIG_DART_BASE64" | base64 --decode > lib/config.dart
+          printf '%s' "$FIREBASE_OPTIONS_BASE64" | base64 --decode > lib/firebase_options.dart
+          printf '%s' "$GOOGLE_SERVICE_PLIST_BASE64" | base64 --decode > ios/Runner/GoogleService-Info.plist
+          printf '%s' "$ASC_JSON_KEY" > ios/fastlane/store.json
+          p8_name=$(ruby -rjson -e 'path = JSON.parse(File.read(ARGV.fetch(0))).fetch("key_filepath"); abort unless path.is_a?(String) && path.match?(/\A\.\/[A-Za-z0-9._-]+\.p8\z/); print File.basename(path)' ios/fastlane/store.json)
+          printf '%s' "$ASC_P8_BASE64" | base64 --decode > "ios/fastlane/$p8_name"
+          printf '%s' "$FASTLANE_ENV_BASE64" | base64 --decode > ios/fastlane/.env
+          chmod 600 ios/fastlane/store.json "ios/fastlane/$p8_name" ios/fastlane/.env
+      - run: flutter pub get
+      - name: Archive, export internal-only IPA, and upload to TestFlight
+        working-directory: ios
+        run: bundle exec fastlane ios beta
+
+  notify:
+    needs: upload
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send upload result to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          UPLOAD_RESULT: ${{ needs.upload.result }}
+        run: |
+          set -euo pipefail
+          test -n "$SLACK_WEBHOOK_URL" || { echo 'Missing repository secret: SLACK_WEBHOOK_URL' >&2; exit 1; }
+          if [[ "$UPLOAD_RESULT" == success ]]; then
+            summary='✅ Development iOS internal-only TestFlight upload succeeded'
+          else
+            summary="❌ Development iOS internal-only TestFlight upload ${UPLOAD_RESULT}"
+          fi
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          message=$(printf '%s\nBranch: %s\n<%s|View GitHub Actions run>' "$summary" "$GITHUB_REF_NAME" "$run_url")
+          payload=$(MESSAGE="$message" python3 -c 'import json, os; print(json.dumps({"text": os.environ["MESSAGE"]}))')
+          curl --fail --silent --show-error --retry 3 --max-time 20 \
+            -H 'Content-Type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"

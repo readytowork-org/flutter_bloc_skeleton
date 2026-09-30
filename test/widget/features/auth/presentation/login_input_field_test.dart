@@ -44,8 +44,6 @@ void main() {
       );
     });
 
-
-
     // ── Validation: username ──────────────────────────────────────────────────
 
     testWidgets('empty username fails FormValidator.fullName', (tester) async {

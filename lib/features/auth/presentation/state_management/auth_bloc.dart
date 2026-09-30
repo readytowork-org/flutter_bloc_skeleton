@@ -4,6 +4,7 @@ import '../../../../core/network/api_result.dart';
 import '../../../../core/utils/typedf/index.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecases/login_usecase.dart';
+import '../../domain/usecases/forgot_password_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/session_usecase.dart';
 import '../../domain/usecases/signup_usecase.dart';
@@ -14,25 +15,42 @@ part 'auth_bloc.freezed.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase _loginUseCase;
+  final ForgotPasswordUseCase _forgotPasswordUseCase;
   final SignupUseCase _signupUseCase;
   final SessionUseCase _sessionUseCase;
   final LogoutUseCase _logoutUseCase;
 
   AuthBloc({
     required LoginUseCase loginUseCase,
+    required ForgotPasswordUseCase forgotPasswordUseCase,
     required SignupUseCase signupUseCase,
     required SessionUseCase sessionUseCase,
     required LogoutUseCase logoutUseCase,
   }) : _loginUseCase = loginUseCase,
+       _forgotPasswordUseCase = forgotPasswordUseCase,
        _signupUseCase = signupUseCase,
        _sessionUseCase = sessionUseCase,
        _logoutUseCase = logoutUseCase,
        super(const AuthInitial()) {
     on<SignUpRequested>(_onSignUpRequested);
     on<LoginRequested>(_onLoginRequested);
+    on<ForgotPasswordRequested>(_onForgotPasswordRequested);
     on<LogoutRequested>(_onLogoutRequested);
     on<AppStarted>(_onAppStarted);
     add(AppStarted());
+  }
+
+  Future<void> _onForgotPasswordRequested(
+    ForgotPasswordRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    final result = await _forgotPasswordUseCase(event.email);
+
+    result.when(
+      success: (message) => emit(PasswordResetRequested(message: message)),
+      failure: (failure) => emit(AuthFailure(message: failure.message)),
+    );
   }
 
   Future<void> _onLoginRequested(

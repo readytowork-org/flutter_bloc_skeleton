@@ -1,0 +1,105 @@
+name: App Store Connect upload (manual or tag)
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-testflight
+  cancel-in-progress: false
+
+jobs:
+  validate_source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require main and, for tags, a matching pubspec version
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            test "$GITHUB_REF" = refs/heads/main || { echo 'Manual production upload must run from main' >&2; exit 1; }
+          else
+            git fetch --no-tags origin main:refs/remotes/origin/main
+            git merge-base --is-ancestor HEAD refs/remotes/origin/main || { echo 'Tag commit must be on main' >&2; exit 1; }
+            version=$(sed -nE 's/^version: *([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+$/\1/p' pubspec.yaml)
+            test -n "$version" && test "${GITHUB_REF_NAME}" = "v${version}" || { echo 'Tag must equal v<pubspec version>' >&2; exit 1; }
+          fi
+
+  upload:
+    needs: validate_source
+    runs-on: macos-latest
+    environment: production
+    steps:
+      - name: Require Slack notification webhook
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          test -n "$SLACK_WEBHOOK_URL" || { echo 'Missing repository secret: SLACK_WEBHOOK_URL' >&2; exit 1; }
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.4'
+          channel: stable
+          cache: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.0'
+          bundler-cache: true
+          working-directory: ios
+      - name: Prepare production configuration
+        env:
+          CONFIG_DART_BASE64: ${{ secrets.PROD_CONFIG_DART_BASE64 }}
+          FIREBASE_OPTIONS_BASE64: ${{ secrets.PROD_FIREBASE_OPTIONS_BASE64 }}
+          GOOGLE_SERVICE_PLIST_BASE64: ${{ secrets.PROD_GOOGLE_SERVICE_PLIST_BASE64 }}
+          ASC_JSON_KEY: ${{ secrets.PROD_ASC_JSON_KEY }}
+          ASC_P8_BASE64: ${{ secrets.PROD_ASC_P8_BASE64 }}
+          FASTLANE_ENV_BASE64: ${{ secrets.PROD_FASTLANE_ENV_BASE64 }}
+        run: |
+          set -euo pipefail
+          for name in CONFIG_DART_BASE64 FIREBASE_OPTIONS_BASE64 GOOGLE_SERVICE_PLIST_BASE64 ASC_JSON_KEY ASC_P8_BASE64 FASTLANE_ENV_BASE64; do
+            test -n "${!name}" || { echo "Missing secret: ${name}" >&2; exit 1; }
+          done
+          printf '%s' "$CONFIG_DART_BASE64" | base64 --decode > lib/config.dart
+          printf '%s' "$FIREBASE_OPTIONS_BASE64" | base64 --decode > lib/firebase_options.dart
+          printf '%s' "$GOOGLE_SERVICE_PLIST_BASE64" | base64 --decode > ios/Runner/GoogleService-Info.plist
+          printf '%s' "$ASC_JSON_KEY" > ios/fastlane/store.json
+          p8_name=$(ruby -rjson -e 'path = JSON.parse(File.read(ARGV.fetch(0))).fetch("key_filepath"); abort unless path.is_a?(String) && path.match?(/\A\.\/[A-Za-z0-9._-]+\.p8\z/); print File.basename(path)' ios/fastlane/store.json)
+          printf '%s' "$ASC_P8_BASE64" | base64 --decode > "ios/fastlane/$p8_name"
+          printf '%s' "$FASTLANE_ENV_BASE64" | base64 --decode > ios/fastlane/.env
+          chmod 600 ios/fastlane/store.json "ios/fastlane/$p8_name" ios/fastlane/.env
+      - run: flutter pub get
+      - name: Archive, export IPA, and upload to App Store Connect
+        working-directory: ios
+        run: bundle exec fastlane ios app_store_connect_upload
+
+  notify:
+    needs: [validate_source, upload]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send upload result to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          VALIDATION_RESULT: ${{ needs.validate_source.result }}
+          UPLOAD_RESULT: ${{ needs.upload.result }}
+        run: |
+          set -euo pipefail
+          test -n "$SLACK_WEBHOOK_URL" || { echo 'Missing repository secret: SLACK_WEBHOOK_URL' >&2; exit 1; }
+          if [[ "$VALIDATION_RESULT" != success ]]; then
+            summary="❌ Production iOS source validation ${VALIDATION_RESULT}; upload did not run"
+          elif [[ "$UPLOAD_RESULT" == success ]]; then
+            summary='✅ Production iOS App Store Connect upload succeeded'
+          else
+            summary="❌ Production iOS App Store Connect upload ${UPLOAD_RESULT}"
+          fi
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          message=$(printf '%s\nRef: %s\n<%s|View GitHub Actions run>' "$summary" "$GITHUB_REF_NAME" "$run_url")
+          payload=$(MESSAGE="$message" python3 -c 'import json, os; print(json.dumps({"text": os.environ["MESSAGE"]}))')
+          curl --fail --silent --show-error --retry 3 --max-time 20 \
+            -H 'Content-Type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"

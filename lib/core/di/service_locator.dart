@@ -10,7 +10,6 @@ import '../../features/cart/cart_di.dart';
 import '../../features/product/product_di.dart';
 
 import '../../features/profile/presentation/profile_di.dart';
-import '../../firebase_options.dart';
 import '../../shared/cubit/locale_cubit.dart';
 import '../routes/app_routes.dart';
 import '../storage/secure_token_storage.dart';
@@ -26,11 +25,11 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
 
   sl.registerLazySingleton(
     () => const FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      aOptions: AndroidOptions(),
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     ),
   );

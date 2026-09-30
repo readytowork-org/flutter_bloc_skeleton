@@ -1,4 +1,4 @@
-enum Flavour { development, staging, production }
+enum Flavour { local, development, production }
 
 enum PaginationStatus { initial, success, failure, loading }
 

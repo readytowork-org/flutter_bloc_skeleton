@@ -11,7 +11,11 @@ import '../../features/product/presentation/routes/product_route_paths.dart'
     show ProductRoute;
 
 class AppRouterRedirect {
-  static final authPages = {AuthRoute.login.path, AuthRoute.register.path};
+  static final authPages = {
+    AuthRoute.login.path,
+    AuthRoute.register.path,
+    AuthRoute.forgotPassword.path,
+  };
 
   static FutureOr<String?> redirect(BuildContext context, GoRouterState state) {
     final location = state.matchedLocation;

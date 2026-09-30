@@ -174,7 +174,10 @@ class _EditProductViewState extends State<EditProductView> {
                               color: AppColors.greyLight,
                               borderRadius: BorderRadius.circular(13),
                             ),
-                            child: const Icon(Icons.image_outlined, color: AppColors.greyDark),
+                            child: const Icon(
+                              Icons.image_outlined,
+                              color: AppColors.greyDark,
+                            ),
                           )
                         : null,
                   ),
@@ -261,7 +264,9 @@ class _EditProductViewState extends State<EditProductView> {
                                       )
                                     : const Icon(Icons.save_rounded, size: 20),
                                 label: Text(
-                                  isLoading ? 'Updating...' : editProductButtonText,
+                                  isLoading
+                                      ? 'Updating...'
+                                      : editProductButtonText,
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,

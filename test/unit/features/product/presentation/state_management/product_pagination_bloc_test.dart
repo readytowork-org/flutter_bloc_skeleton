@@ -53,8 +53,9 @@ void main() {
   blocTest<ProductPaginationBloc, PaginationState<ProductEntity>>(
     'emits [loading, success] when fetchItems succeeds',
     build: () {
-      when(() => mockUseCase.call(any()))
-          .thenAnswer((_) async => ApiResult.success(tProductResponseEntity));
+      when(
+        () => mockUseCase.call(any()),
+      ).thenAnswer((_) async => ApiResult.success(tProductResponseEntity));
       return bloc;
     },
     act: (bloc) => bloc.add(const PaginationFetch()),
@@ -74,8 +75,11 @@ void main() {
   blocTest<ProductPaginationBloc, PaginationState<ProductEntity>>(
     'emits [loading, failure] when fetchItems fails',
     build: () {
-      when(() => mockUseCase.call(any()))
-          .thenAnswer((_) async => const ApiResult<ProductResponseEntity>.failure(ServerFailure('Error')));
+      when(() => mockUseCase.call(any())).thenAnswer(
+        (_) async => const ApiResult<ProductResponseEntity>.failure(
+          ServerFailure('Error'),
+        ),
+      );
       return bloc;
     },
     act: (bloc) => bloc.add(const PaginationFetch()),

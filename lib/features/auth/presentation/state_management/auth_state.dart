@@ -8,4 +8,6 @@ class AuthState with _$AuthState {
       Authenticated;
   const factory AuthState.unauthenticated({String? message}) = Unauthenticated;
   const factory AuthState.failure({required String message}) = AuthFailure;
+  const factory AuthState.passwordResetRequested({required String message}) =
+      PasswordResetRequested;
 }

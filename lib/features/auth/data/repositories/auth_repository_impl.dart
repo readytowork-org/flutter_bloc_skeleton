@@ -68,4 +68,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return ApiResult.failure(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<ApiResult<String>> forgotPassword(String email) =>
+      throw UnimplementedError();
 }

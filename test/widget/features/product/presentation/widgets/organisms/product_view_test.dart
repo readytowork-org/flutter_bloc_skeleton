@@ -33,8 +33,7 @@ void main() {
         res: [ProductCategoryEntity(name: 'All')],
       ),
     );
-    when(() => mockCategoryBloc.stream)
-        .thenAnswer((_) => const Stream.empty());
+    when(() => mockCategoryBloc.stream).thenAnswer((_) => const Stream.empty());
   });
 
   group('ProductView', () {
