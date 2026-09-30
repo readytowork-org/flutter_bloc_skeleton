@@ -6,6 +6,8 @@ import 'package:flutter/material.dart'
 
 import 'app.dart' show App;
 import 'core/di/service_locator.dart' as di;
+import 'core/network/background_sync_service.dart';
+import 'core/storage/optimization_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -30,6 +32,12 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await FirebaseMessaging.instance.subscribeToTopic("all");
   await di.sl<FirebaseNotificationService>().initialize();
+
+  // Initialize Background Sync
+  await BackgroundSyncService.init();
+  if (di.sl<OptimizationService>().autoDownloadOnWifi) {
+    await BackgroundSyncService.schedulePeriodicSync();
+  }
 
   runApp(const App());
 }

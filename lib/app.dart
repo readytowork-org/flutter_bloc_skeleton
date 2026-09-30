@@ -18,6 +18,7 @@ import 'config.dart';
 import 'core/routes/app_routes.dart';
 import 'core/utils/enum/index.dart';
 import 'features/auth/auth.dart';
+import 'features/optimization/bloc/optimization_bloc.dart';
 import 'core/theme/app_theme.dart';
 import 'l10n/s.dart';
 import 'shared/cubit/locale_cubit.dart';
@@ -33,14 +34,15 @@ class App extends StatelessWidget {
         BlocProvider.value(value: sl<AuthBloc>()),
         BlocProvider.value(value: sl<AppTheme>()),
         BlocProvider.value(value: sl<LocaleCubit>()),
+        BlocProvider(create: (context) => sl<OptimizationBloc>()),
       ],
-      child: ScreenUtilInit(
-        minTextAdapt: true,
-        designSize: const Size(360, 690),
-        builder: (context, child) => BlocBuilder<LocaleCubit, Locale>(
-          builder: (context, locale) {
-            return BlocBuilder<AppTheme, ThemeData>(
-              builder: (context, themeData) => MaterialApp.router(
+      child: BlocBuilder<LocaleCubit, Locale>(
+        builder: (context, locale) {
+          return BlocBuilder<AppTheme, ThemeData>(
+            builder: (context, themeData) => ScreenUtilInit(
+              minTextAdapt: true,
+              designSize: const Size(360, 690),
+              builder: (context, child) => MaterialApp.router(
                 debugShowCheckedModeBanner: kDebugMode,
                 routerConfig: sl<AppRouter>(),
                 title: 'Flutter Bloc Skeleton',
@@ -54,9 +56,9 @@ class App extends StatelessWidget {
                   return LocaleSwitcher(child: content);
                 },
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

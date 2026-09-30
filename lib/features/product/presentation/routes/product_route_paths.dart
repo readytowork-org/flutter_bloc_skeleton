@@ -7,9 +7,9 @@ enum ProductRoute {
 
   String get path => switch (this) {
     ProductRoute.product => '/',
-    ProductRoute.productDetail => '/:id',
-    ProductRoute.addProduct => '/add',
-    ProductRoute.editProduct => '/edit/:id',
+    ProductRoute.productDetail => '/product/:id',
+    ProductRoute.addProduct => '/product/add',
+    ProductRoute.editProduct => '/product/edit/:id',
   };
 
   String get routeName => switch (this) {

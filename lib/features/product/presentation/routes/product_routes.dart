@@ -43,33 +43,30 @@ abstract final class ProductRoutes {
               child: const ProductPage(),
             );
           },
-          routes: [
-            GoRoute(
-              path: ProductRoute.addProduct.path,
-              builder: (BuildContext context, GoRouterState state) =>
-                  BlocProvider(
-                    create: (context) => sl<AddProductBloc>(),
-                    child: const AddProductPage(),
-                  ),
-            ),
-            GoRoute(
-              path: ProductRoute.editProduct.path,
-              builder: (BuildContext context, GoRouterState state) =>
-                  BlocProvider(
-                    create: (context) => sl<EditProductBloc>(),
-                    child: EditProductPage(
-                      product: state.extra as ProductEntity,
-                    ),
-                  ),
-            ),
-            GoRoute(
-              path: ProductRoute.productDetail.path,
-              builder: (BuildContext context, GoRouterState state) {
-                final id = state.extra as int;
-                return ProductDetailPage(id: id.toString());
-              },
-            ),
-          ],
+        ),
+        GoRoute(
+          path: ProductRoute.addProduct.path,
+          name: ProductRoute.addProduct.routeName,
+          builder: (BuildContext context, GoRouterState state) => BlocProvider(
+            create: (context) => sl<AddProductBloc>(),
+            child: const AddProductPage(),
+          ),
+        ),
+        GoRoute(
+          path: ProductRoute.editProduct.path,
+          name: ProductRoute.editProduct.routeName,
+          builder: (BuildContext context, GoRouterState state) => BlocProvider(
+            create: (context) => sl<EditProductBloc>(),
+            child: EditProductPage(product: state.extra as ProductEntity),
+          ),
+        ),
+        GoRoute(
+          path: ProductRoute.productDetail.path,
+          name: ProductRoute.productDetail.routeName,
+          builder: (BuildContext context, GoRouterState state) {
+            final id = state.extra as int;
+            return ProductDetailPage(id: id.toString());
+          },
         ),
       ],
     ),

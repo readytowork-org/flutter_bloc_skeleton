@@ -8,6 +8,7 @@ import '../../../shared/widgets/organisms/page_not_found.dart'
 import '../../features/product/presentation/routes/product_routes.dart'
     show ProductRoutes;
 import '../../features/profile/presentation/routes/profile_routes.dart';
+import '../../features/optimization/presentation/routes/optimization_routes.dart';
 import 'app_route_config.dart' show ConstantRoutingConfig;
 import 'app_route_redirect.dart' show AppRouterRedirect;
 
@@ -15,13 +16,13 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 class AppRouter extends GoRouter {
   AppRouter({
+    super.navigatorKey,
     super.refreshListenable,
     super.observers,
     super.debugLogDiagnostics,
     super.errorPageBuilder,
     super.extraCodec,
     super.initialExtra,
-    super.navigatorKey,
     super.initialLocation,
     super.onException,
     super.overridePlatformDefaultLocation,
@@ -37,6 +38,7 @@ class AppRouter extends GoRouter {
                ...ProfileRoutes.routes,
                ...ProductRoutes.routes,
                ...CartRoutes.routes,
+               ...OptimizationRoutes.routes,
              ],
            ),
          ),
