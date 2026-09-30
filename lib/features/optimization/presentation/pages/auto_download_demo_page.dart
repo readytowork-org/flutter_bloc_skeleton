@@ -166,7 +166,8 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
             // Speed simulation based on connection
             final speed = activeStatus == ConnectionStatus.wifi ? 4.5 : 1.2;
             item.speedMbps = speed;
-            final progressDelta = (speed * 1024 * 1024 * 0.5) / item.totalSizeBytes;
+            final progressDelta =
+                (speed * 1024 * 1024 * 0.5) / item.totalSizeBytes;
             item.progress = (item.progress + progressDelta).clamp(0.0, 1.0);
 
             if (item.progress >= 1.0) {
@@ -219,12 +220,16 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
       _isBackgroundSyncActive = true;
     });
 
-    _addLog("⚙️ Mock Workmanager: Triggering background worker periodic task...");
+    _addLog(
+      "⚙️ Mock Workmanager: Triggering background worker periodic task...",
+    );
     await Future.delayed(const Duration(seconds: 1));
 
     final activeStatus = _getActiveStatus(state);
     if (activeStatus == ConnectionStatus.wifi) {
-      _addLog("⚙️ Mock Workmanager: Wi-Fi detected! Starting auto-downloads...");
+      _addLog(
+        "⚙️ Mock Workmanager: Wi-Fi detected! Starting auto-downloads...",
+      );
       await Future.delayed(const Duration(seconds: 1));
 
       for (var item in _items) {
@@ -237,9 +242,13 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
     } else if (activeStatus == ConnectionStatus.cellular) {
       _addLog("⚙️ Mock Workmanager: Cellular detected.");
       if (state.autoDownloadOnWifi) {
-        _addLog("⚙️ Mock Workmanager: Auto-download constraint active. Delaying heavy files sync.");
+        _addLog(
+          "⚙️ Mock Workmanager: Auto-download constraint active. Delaying heavy files sync.",
+        );
       } else {
-        _addLog("⚙️ Mock Workmanager: Auto-download on Wi-Fi is disabled. Proceeding over Cellular...");
+        _addLog(
+          "⚙️ Mock Workmanager: Auto-download on Wi-Fi is disabled. Proceeding over Cellular...",
+        );
         for (var item in _items) {
           if (!item.isCached && !item.isDownloading) {
             _triggerSingleDownload(item, state);
@@ -281,7 +290,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
             icon: const Icon(Icons.refresh),
             onPressed: _clearCache,
             tooltip: "Clear Cache",
-          )
+          ),
         ],
       ),
       body: BlocBuilder<OptimizationBloc, OptimizationState>(
@@ -370,7 +379,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E2A),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -406,8 +415,8 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                             : "Restored live device connectivity status.",
                       );
                     },
-                    activeColor: const Color(0xFF8E24AA),
-                  )
+                    activeThumbColor: const Color(0xFF8E24AA),
+                  ),
                 ],
               ),
             ],
@@ -467,11 +476,13 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-                ? activeColor.withOpacity(0.15)
+                ? activeColor.withValues(alpha: 0.15)
                 : const Color(0xFF12121A),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? activeColor : Colors.white.withOpacity(0.04),
+              color: isSelected
+                  ? activeColor
+                  : Colors.white.withValues(alpha: 0.04),
               width: 1.5,
             ),
           ),
@@ -504,7 +515,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF161622),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Row(
@@ -518,7 +529,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
           Container(
             height: 24,
             width: 1,
-            color: Colors.white.withOpacity(0.08),
+            color: Colors.white.withValues(alpha: 0.08),
           ),
           _buildSettingsIndicator(
             Icons.data_saver_on,
@@ -555,13 +566,16 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
               ),
             ),
           ],
-        )
+        ),
       ],
     );
   }
 
   // Media Download Queue List
-  Widget _buildMediaSection(ConnectionStatus activeStatus, OptimizationState state) {
+  Widget _buildMediaSection(
+    ConnectionStatus activeStatus,
+    OptimizationState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -599,7 +613,8 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
       statusText = "Cached (Offline Ready)";
       statusColor = Colors.green;
     } else if (item.isDownloading) {
-      statusText = "Downloading (${(item.progress * 100).toInt()}%) - ${item.speedMbps.toStringAsFixed(1)} MB/s";
+      statusText =
+          "Downloading (${(item.progress * 100).toInt()}%) - ${item.speedMbps.toStringAsFixed(1)} MB/s";
       statusColor = const Color(0xFF8E24AA);
     } else if (item.isPaused) {
       statusText = "Paused";
@@ -617,8 +632,8 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: item.isCached
-              ? Colors.green.withOpacity(0.2)
-              : Colors.white.withOpacity(0.04),
+              ? Colors.green.withValues(alpha: 0.2)
+              : Colors.white.withValues(alpha: 0.04),
         ),
       ),
       padding: const EdgeInsets.all(14),
@@ -629,7 +644,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: item.color.withOpacity(0.12),
+                  color: item.color.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(item.icon, color: item.color, size: 24),
@@ -696,7 +711,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                 minHeight: 5,
               ),
             ),
-          ]
+          ],
         ],
       ),
     );
@@ -782,7 +797,10 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                   // Immersive Title Bar
                   Container(
                     color: const Color(0xFF12121A),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -803,16 +821,18 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                         IconButton(
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
-                          icon: const Icon(Icons.close, color: Colors.white60, size: 20),
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.white60,
+                            size: 20,
+                          ),
                           onPressed: () => Navigator.pop(context),
-                        )
+                        ),
                       ],
                     ),
                   ),
                   // Immersive Preview Body
-                  Expanded(
-                    child: _buildImmersiveContent(item),
-                  )
+                  Expanded(child: _buildImmersiveContent(item)),
                 ],
               ),
             ),
@@ -846,7 +866,14 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
               children: [
                 const Icon(Icons.menu, color: Colors.black54, size: 18),
                 const SizedBox(width: 14),
-                const Text("Page 1 of 8", style: TextStyle(color: Colors.black87, fontSize: 11, fontWeight: FontWeight.w600)),
+                const Text(
+                  "Page 1 of 8",
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const Spacer(),
                 const Icon(Icons.zoom_in, color: Colors.black54, size: 18),
                 const SizedBox(width: 14),
@@ -868,21 +895,42 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.red[50],
-                        border: Border.all(color: Colors.red.withOpacity(0.2)),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.2),
+                        ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.picture_as_pdf, color: Colors.red[700], size: 24),
+                          Icon(
+                            Icons.picture_as_pdf,
+                            color: Colors.red[700],
+                            size: 24,
+                          ),
                           const SizedBox(width: 8),
-                          const Text("OFFLINE READY • LOCAL CACHE", style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold)),
+                          const Text(
+                            "OFFLINE READY • LOCAL CACHE",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text("PRODUCT CATALOG 2026", style: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: 0.8)),
+                  const Text(
+                    "PRODUCT CATALOG 2026",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Container(width: 60, height: 4, color: Colors.red[600]),
                   const SizedBox(height: 16),
@@ -892,9 +940,25 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                   const SizedBox(height: 14),
                   Row(
                     children: [
-                      Expanded(child: Container(height: 80, decoration: BoxDecoration(color: Colors.blueGrey[100], borderRadius: BorderRadius.circular(6)))),
+                      Expanded(
+                        child: Container(
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey[100],
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 8),
-                      Expanded(child: Container(height: 80, decoration: BoxDecoration(color: Colors.blueGrey[100], borderRadius: BorderRadius.circular(6)))),
+                      Expanded(
+                        child: Container(
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey[100],
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 14),
@@ -903,7 +967,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -946,9 +1010,16 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.video_library, color: Colors.blueAccent.withOpacity(0.3), size: 64),
+                  Icon(
+                    Icons.video_library,
+                    color: Colors.blueAccent.withValues(alpha: 0.3),
+                    size: 64,
+                  ),
                   const SizedBox(height: 8),
-                  const Text("Playing Cached Showcase Video", style: TextStyle(color: Colors.white38, fontSize: 11)),
+                  const Text(
+                    "Playing Cached Showcase Video",
+                    style: TextStyle(color: Colors.white38, fontSize: 11),
+                  ),
                 ],
               ),
             ),
@@ -965,19 +1036,33 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.black.withAlpha(204),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Row(
                           children: [
-                            Icon(Icons.offline_pin, color: Colors.green, size: 12),
+                            Icon(
+                              Icons.offline_pin,
+                              color: Colors.green,
+                              size: 12,
+                            ),
                             SizedBox(width: 4),
-                            Text("1080p Local Cached", style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+                            Text(
+                              "1080p Local Cached",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                   // Centered play indicator
@@ -988,7 +1073,11 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white30),
                     ),
-                    child: const Icon(Icons.pause, color: Colors.white, size: 28),
+                    child: const Icon(
+                      Icons.pause,
+                      color: Colors.white,
+                      size: 28,
+                    ),
                   ),
                   // Progress and volume toolbar
                   Column(
@@ -996,8 +1085,20 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: const [
-                          Text("01:24", style: TextStyle(color: Colors.white70, fontSize: 10)),
-                          Text("04:32", style: TextStyle(color: Colors.white30, fontSize: 10)),
+                          Text(
+                            "01:24",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 10,
+                            ),
+                          ),
+                          Text(
+                            "04:32",
+                            style: TextStyle(
+                              color: Colors.white30,
+                              fontSize: 10,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -1013,19 +1114,31 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                       const SizedBox(height: 8),
                       Row(
                         children: const [
-                          Icon(Icons.volume_up, color: Colors.white70, size: 16),
+                          Icon(
+                            Icons.volume_up,
+                            color: Colors.white70,
+                            size: 16,
+                          ),
                           SizedBox(width: 14),
-                          Icon(Icons.closed_caption, color: Colors.white70, size: 16),
+                          Icon(
+                            Icons.closed_caption,
+                            color: Colors.white70,
+                            size: 16,
+                          ),
                           Spacer(),
-                          Icon(Icons.fullscreen, color: Colors.white70, size: 16),
+                          Icon(
+                            Icons.fullscreen,
+                            color: Colors.white70,
+                            size: 16,
+                          ),
                         ],
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -1046,7 +1159,9 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E1E2A),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.08),
+                  ),
                 ),
                 child: Stack(
                   fit: StackFit.expand,
@@ -1056,7 +1171,11 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Center(
-                          child: Icon(Icons.image, color: Colors.teal.withOpacity(0.3), size: 80),
+                          child: Icon(
+                            Icons.image,
+                            color: Colors.teal.withValues(alpha: 0.3),
+                            size: 80,
+                          ),
                         );
                       },
                     ),
@@ -1064,14 +1183,24 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                       bottom: 12,
                       right: 12,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.black.withAlpha(204),
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: const Text("100% Caching Ready", style: TextStyle(color: Colors.green, fontSize: 9, fontWeight: FontWeight.bold)),
+                        child: const Text(
+                          "100% Caching Ready",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -1094,7 +1223,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1109,7 +1238,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                 topRight: Radius.circular(16),
               ),
               border: Border(
-                bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+                bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
               ),
             ),
             child: Row(
@@ -1134,12 +1263,19 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                   backgroundColor: const Color(0xFF8E24AA),
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
                 ).onPressed(
-                  _isBackgroundSyncActive ? null : () => _simulateBackgroundSync(state),
+                  _isBackgroundSyncActive
+                      ? null
+                      : () => _simulateBackgroundSync(state),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -1147,16 +1283,26 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                         const SizedBox(
                           width: 10,
                           height: 10,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 1.5),
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 1.5,
+                          ),
                         ),
                         const SizedBox(width: 6),
                       ] else ...[
-                        const Icon(Icons.play_arrow, color: Colors.white, size: 10),
+                        const Icon(
+                          Icons.play_arrow,
+                          color: Colors.white,
+                          size: 10,
+                        ),
                         const SizedBox(width: 4),
                       ],
                       const Text(
                         "Trigger Sync",
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -1172,7 +1318,11 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                 ? const Center(
                     child: Text(
                       "Console clean. Click 'Trigger Sync' to run background task mockup.",
-                      style: TextStyle(color: Colors.white24, fontSize: 11, fontFamily: "monospace"),
+                      style: TextStyle(
+                        color: Colors.white24,
+                        fontSize: 11,
+                        fontFamily: "monospace",
+                      ),
                     ),
                   )
                 : ListView.builder(
@@ -1192,7 +1342,7 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
                       );
                     },
                   ),
-          )
+          ),
         ],
       ),
     );
@@ -1202,10 +1352,6 @@ class _AutoDownloadDemoPageState extends State<AutoDownloadDemoPage> {
 // Small extension utility to avoid elevated button syntax verbose
 extension _ButtonOnPressed on ButtonStyle {
   Widget onPressed(VoidCallback? action, {required Widget child}) {
-    return ElevatedButton(
-      style: this,
-      onPressed: action,
-      child: child,
-    );
+    return ElevatedButton(style: this, onPressed: action, child: child);
   }
 }

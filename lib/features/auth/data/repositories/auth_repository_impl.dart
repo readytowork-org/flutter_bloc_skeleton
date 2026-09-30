@@ -30,6 +30,18 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<ApiResult<String>> forgotPassword(String email) async {
+    try {
+      await _remoteDataSource.forgotPassword(email);
+      return const ApiResult.success(
+        'If an account exists for this email, a password reset link will be sent.',
+      );
+    } catch (e) {
+      return ApiResult.failure(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<ApiResult<TokenEntity>> refreshToken(String token) async {
     try {
       final tokenEntity = await _remoteDataSource.refreshToken(token);

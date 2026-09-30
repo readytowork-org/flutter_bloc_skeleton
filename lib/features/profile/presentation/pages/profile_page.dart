@@ -27,7 +27,8 @@ class ProfilePage extends StatelessWidget {
                   leading: const Icon(Icons.storage),
                   title: const Text('Data & Storage Optimization'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push(OptimizationRoutes.optimizationSettings),
+                  onTap: () =>
+                      context.push(OptimizationRoutes.optimizationSettings),
                 ),
               ],
             );

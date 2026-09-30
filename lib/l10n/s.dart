@@ -106,31 +106,31 @@ abstract class S {
   /// No description provided for @authName.
   ///
   /// In en, this message translates to:
-  /// **'Full Name'**
+  /// **'Enter a Full Name'**
   String get authName;
 
   /// No description provided for @authEmailAddress.
   ///
   /// In en, this message translates to:
-  /// **'Email Address'**
+  /// **'Enter a Email Address'**
   String get authEmailAddress;
 
   /// No description provided for @authPhone.
   ///
   /// In en, this message translates to:
-  /// **'Phone'**
+  /// **'Enter Phone Number'**
   String get authPhone;
 
   /// No description provided for @authFurigana.
   ///
   /// In en, this message translates to:
-  /// **'Furigana'**
+  /// **'Enter a Furigana'**
   String get authFurigana;
 
   /// No description provided for @authPassword.
   ///
   /// In en, this message translates to:
-  /// **'Password'**
+  /// **'Enter a Password'**
   String get authPassword;
 
   /// No description provided for @authTest.

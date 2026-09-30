@@ -9,16 +9,16 @@ void callbackDispatcher() {
 
     // Check connectivity inside the task
     final connectivity = await Connectivity().checkConnectivity();
-    if (connectivity.contains(ConnectivityResult.wifi) || 
+    if (connectivity.contains(ConnectivityResult.wifi) ||
         connectivity.contains(ConnectivityResult.ethernet)) {
       dev.log("Device is on Wi-Fi. Starting background auto-downloads...");
-      
+
       // MOCK: In a real app, you would fetch a list of resources to download
       // and use Dio with CacheInterceptor to save them.
       // Example:
       // final dio = Dio();
-      // await dio.get('https://example.com/large-image.jpg'); 
-      
+      // await dio.get('https://example.com/large-image.jpg');
+
       await Future.delayed(const Duration(seconds: 2)); // Simulate work
       dev.log("Background auto-downloads completed.");
       return Future.value(true);
@@ -33,10 +33,7 @@ class BackgroundSyncService {
   static const String taskName = "com.example.app.backgroundSync";
 
   static Future<void> init() async {
-    await Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: true, // Set to false in production
-    );
+    await Workmanager().initialize(callbackDispatcher);
   }
 
   static Future<void> schedulePeriodicSync() async {
@@ -45,7 +42,8 @@ class BackgroundSyncService {
       taskName,
       frequency: const Duration(hours: 1), // Minimum 15 mins for Android
       constraints: Constraints(
-        networkType: NetworkType.connected, // WorkManager handles some level of connectivity
+        networkType: NetworkType
+            .connected, // WorkManager handles some level of connectivity
         requiresBatteryNotLow: true,
       ),
     );

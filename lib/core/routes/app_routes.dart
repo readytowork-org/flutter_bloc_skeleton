@@ -16,7 +16,7 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 class AppRouter extends GoRouter {
   AppRouter({
-    GlobalKey<NavigatorState>? navigatorKey,
+    super.navigatorKey,
     super.refreshListenable,
     super.observers,
     super.debugLogDiagnostics,
@@ -30,7 +30,6 @@ class AppRouter extends GoRouter {
     super.restorationScopeId,
     super.routerNeglect,
   }) : super.routingConfig(
-         navigatorKey: navigatorKey,
          routingConfig: ConstantRoutingConfig(
            RoutingConfig(
              redirect: AppRouterRedirect.redirect,

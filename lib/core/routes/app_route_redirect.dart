@@ -13,7 +13,11 @@ import '../di/service_locator.dart' show sl;
 import '../storage/token_storage.dart' show TokenStorage;
 
 class AppRouterRedirect {
-  static final authPages = {AuthRoute.login.path, AuthRoute.register.path};
+  static final authPages = {
+    AuthRoute.login.path,
+    AuthRoute.register.path,
+    AuthRoute.forgotPassword.path,
+  };
 
   static FutureOr<String?> redirect(BuildContext context, GoRouterState state) {
     final authState = sl<AuthBloc>().state;

@@ -7,13 +7,13 @@ class OptimizationRoutes {
   static const String autoDownloadDemo = '/auto-download-demo';
 
   static List<RouteBase> get routes => [
-        GoRoute(
-          path: optimizationSettings,
-          builder: (context, state) => const OptimizationSettingsPage(),
-        ),
-        GoRoute(
-          path: autoDownloadDemo,
-          builder: (context, state) => const AutoDownloadDemoPage(),
-        ),
-      ];
+    GoRoute(
+      path: optimizationSettings,
+      builder: (context, state) => const OptimizationSettingsPage(),
+    ),
+    GoRoute(
+      path: autoDownloadDemo,
+      builder: (context, state) => const AutoDownloadDemoPage(),
+    ),
+  ];
 }

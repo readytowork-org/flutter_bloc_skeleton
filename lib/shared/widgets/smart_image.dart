@@ -33,9 +33,10 @@ class _SmartImageState extends State<SmartImage> {
   Widget build(BuildContext context) {
     return BlocBuilder<OptimizationBloc, OptimizationState>(
       builder: (context, state) {
-        final isCellular = state.connectivityStatus == ConnectionStatus.cellular;
+        final isCellular =
+            state.connectivityStatus == ConnectionStatus.cellular;
         final dataSaverOn = state.dataSaverMode;
-        
+
         // If data saver is on, we are on cellular, and user hasn't forced load
         if (dataSaverOn && isCellular && !_forceLoad) {
           return _buildDataSaverPlaceholder();
@@ -69,23 +70,16 @@ class _SmartImageState extends State<SmartImage> {
           Container(
             width: widget.width,
             height: widget.height,
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             child: widget.blurHash != null
-                ? Opacity(
-                    opacity: 0.5,
-                    child: BlurHash(hash: widget.blurHash!),
-                  )
+                ? Opacity(opacity: 0.5, child: BlurHash(hash: widget.blurHash!))
                 : const SizedBox.shrink(),
           ),
           // Data Saver Icon and Label
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.data_usage,
-                color: Colors.white,
-                size: 32,
-              ),
+              const Icon(Icons.data_usage, color: Colors.white, size: 32),
               const SizedBox(height: 4),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

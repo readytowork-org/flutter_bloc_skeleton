@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-enum ConnectionStatus {
-  wifi,
-  cellular,
-  none,
-}
+enum ConnectionStatus { wifi, cellular, none }
 
 class ConnectivityService {
   final Connectivity _connectivity = Connectivity();
@@ -28,7 +24,7 @@ class ConnectivityService {
 
   void _emitStatus(List<ConnectivityResult> results) {
     // connectivity_plus 6.0+ returns a list. We prioritize wifi > cellular > none.
-    if (results.contains(ConnectivityResult.wifi) || 
+    if (results.contains(ConnectivityResult.wifi) ||
         results.contains(ConnectivityResult.ethernet)) {
       _statusController.add(ConnectionStatus.wifi);
     } else if (results.contains(ConnectivityResult.mobile)) {
@@ -39,7 +35,7 @@ class ConnectivityService {
   }
 
   ConnectionStatus _mapResultToStatus(List<ConnectivityResult> results) {
-     if (results.contains(ConnectivityResult.wifi) || 
+    if (results.contains(ConnectivityResult.wifi) ||
         results.contains(ConnectivityResult.ethernet)) {
       return ConnectionStatus.wifi;
     } else if (results.contains(ConnectivityResult.mobile)) {

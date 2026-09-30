@@ -13,15 +13,17 @@ class OptimizationBloc extends Bloc<OptimizationEvent, OptimizationState> {
   OptimizationBloc({
     required OptimizationService optimizationService,
     required ConnectivityService connectivityService,
-  })  : _optimizationService = optimizationService,
-        _connectivityService = connectivityService,
-        super(const OptimizationState()) {
+  }) : _optimizationService = optimizationService,
+       _connectivityService = connectivityService,
+       super(const OptimizationState()) {
     on<LoadOptimizationSettings>(_onLoadSettings);
     on<UpdateConnectivityStatus>(_onUpdateConnectivity);
     on<ToggleAutoDownloadOnWifi>(_onToggleAutoDownload);
     on<ToggleDataSaverMode>(_onToggleDataSaver);
 
-    _connectivitySubscription = _connectivityService.statusStream.listen((status) {
+    _connectivitySubscription = _connectivityService.statusStream.listen((
+      status,
+    ) {
       add(UpdateConnectivityStatus(status));
     });
 
@@ -33,11 +35,13 @@ class OptimizationBloc extends Bloc<OptimizationEvent, OptimizationState> {
     Emitter<OptimizationState> emit,
   ) async {
     final status = await _connectivityService.checkConnectivity();
-    emit(state.copyWith(
-      autoDownloadOnWifi: _optimizationService.autoDownloadOnWifi,
-      dataSaverMode: _optimizationService.dataSaverMode,
-      connectivityStatus: status,
-    ));
+    emit(
+      state.copyWith(
+        autoDownloadOnWifi: _optimizationService.autoDownloadOnWifi,
+        dataSaverMode: _optimizationService.dataSaverMode,
+        connectivityStatus: status,
+      ),
+    );
   }
 
   void _onUpdateConnectivity(

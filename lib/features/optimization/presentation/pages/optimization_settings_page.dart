@@ -26,19 +26,27 @@ class OptimizationSettingsPage extends StatelessWidget {
               const Divider(),
               SwitchListTile(
                 title: const Text("Auto-download on Wi-Fi"),
-                subtitle: const Text("Download updates and resources automatically when connected to Wi-Fi."),
+                subtitle: const Text(
+                  "Download updates and resources automatically when connected to Wi-Fi.",
+                ),
                 value: state.autoDownloadOnWifi,
                 onChanged: (val) {
-                  context.read<OptimizationBloc>().add(ToggleAutoDownloadOnWifi(val));
+                  context.read<OptimizationBloc>().add(
+                    ToggleAutoDownloadOnWifi(val),
+                  );
                 },
                 secondary: const Icon(Icons.wifi_protected_setup),
               ),
               SwitchListTile(
                 title: const Text("Data Saver Mode"),
-                subtitle: const Text("Reduce data usage on cellular networks by pausing large image downloads."),
+                subtitle: const Text(
+                  "Reduce data usage on cellular networks by pausing large image downloads.",
+                ),
                 value: state.dataSaverMode,
                 onChanged: (val) {
-                  context.read<OptimizationBloc>().add(ToggleDataSaverMode(val));
+                  context.read<OptimizationBloc>().add(
+                    ToggleDataSaverMode(val),
+                  );
                 },
                 secondary: const Icon(Icons.data_saver_on),
               ),
@@ -55,8 +63,10 @@ class OptimizationSettingsPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: const SmartImage(
-                    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
-                    blurHash: "L6PZf6ayfQay~qj[fQayfQfQfQfQ", // Placeholder hash
+                    imageUrl:
+                        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
+                    blurHash:
+                        "L6PZf6ayfQay~qj[fQayfQfQfQfQ", // Placeholder hash
                     height: 200,
                     width: double.infinity,
                   ),
@@ -81,7 +91,10 @@ class OptimizationSettingsPage extends StatelessWidget {
                       children: [
                         Text(
                           "Storage Tip",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         SizedBox(height: 8),
                         Text(
@@ -94,7 +107,10 @@ class OptimizationSettingsPage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
@@ -105,7 +121,7 @@ class OptimizationSettingsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF8E24AA).withOpacity(0.3),
+                        color: const Color(0xFF8E24AA).withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -125,7 +141,7 @@ class OptimizationSettingsPage extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(

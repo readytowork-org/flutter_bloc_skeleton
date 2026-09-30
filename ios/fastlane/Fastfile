@@ -1,0 +1,100 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Archive and upload an internal-only TestFlight build"
+  lane :beta do
+    upload_ios_build(internal_only: true)
+  end
+
+  desc "Archive and upload an App Store Connect build without submitting it for review"
+  lane :app_store_connect_upload do
+    upload_ios_build(internal_only: false)
+  end
+
+  private_lane :upload_ios_build do |options|
+    internal_only = options.fetch(:internal_only)
+    pubspec = File.read(File.expand_path("../../pubspec.yaml", __dir__))
+    version_line = pubspec.match(/^version:\s*['"]?(\d+\.\d+\.\d+)\+(\d+)['"]?\s*$/)
+    UI.user_error!("Set version: x.y.z+build in pubspec.yaml") unless version_line
+
+    version = version_line[1]
+    minimum_build = version_line[2].to_i
+
+    json_path = File.expand_path("store.json", __dir__)
+    UI.user_error!("Missing ios/fastlane/store.json") unless File.file?(json_path)
+    api_config = JSON.parse(File.read(json_path))
+    key_file = api_config.fetch("key_filepath")
+    unless key_file.match?(/\A\.\/[A-Za-z0-9._-]+\.p8\z/)
+      UI.user_error!("key_filepath must be ./<filename>.p8 inside ios/fastlane")
+    end
+    key_path = File.expand_path(key_file, __dir__)
+    UI.user_error!("Missing App Store Connect .p8 file: #{key_file}") unless File.file?(key_path)
+    api_key = app_store_connect_api_key(
+      key_id: api_config.fetch("key_id"),
+      issuer_id: api_config.fetch("issuer_id"),
+      key_filepath: key_path
+    )
+
+    latest_build = latest_testflight_build_number(
+      app_identifier: ENV.fetch("FASTLANE_APP_IDENTIFIER"),
+      version: version,
+      initial_build_number: minimum_build - 1,
+      api_key: api_key
+    ).to_i
+    build_number = [minimum_build, latest_build + 1].max
+    UI.message("Building #{version} (#{build_number}) from pubspec.yaml")
+
+    # Flutter generates the iOS assets and version settings used by Xcode.
+    Bundler.with_unbundled_env do
+      flutter_verbose = ENV["FLUTTER_VERBOSE"] == "1" ? " --verbose" : ""
+      sh("cd .. && flutter build ios --release --no-codesign --build-name=#{version} --build-number=#{build_number}#{flutter_verbose}")
+    end
+
+    app_identifier = ENV.fetch("FASTLANE_APP_IDENTIFIER")
+    profile_name = ENV["LOCAL_SIGNING_PROFILE_NAME"]
+    if profile_name && !profile_name.empty?
+      UI.user_error!("Local signing profile must not be used in GitHub Actions") if ENV["GITHUB_ACTIONS"] == "true"
+      UI.message("Using installed local signing profile: #{profile_name}")
+    else
+      setup_ci if ENV["GITHUB_ACTIONS"] == "true"
+      match(type: "appstore", readonly: true, api_key: api_key)
+      if ENV["GITHUB_ACTIONS"] == "true"
+        identities = IO.popen(["security", "find-identity", "-v", "-p", "codesigning"], &:read)
+        unless identities.include?("(#{ENV.fetch('FASTLANE_TEAM_ID')})")
+          UI.user_error!("Match did not install an Apple Distribution signing identity. Re-export the certificate and private key as a .p12 without a file password, then re-import it into Match.")
+        end
+      end
+      profile_mapping = lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING] || {}
+      profile_name = profile_mapping[app_identifier]
+      UI.user_error!("Match did not provide an App Store profile for #{app_identifier}") unless profile_name
+    end
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: ENV.fetch("FASTLANE_TEAM_ID"),
+      profile_name: profile_name,
+      code_sign_identity: "Apple Distribution"
+    )
+
+    export_options = { provisioningProfiles: { app_identifier => profile_name } }
+    # Xcode marks this IPA as ineligible for external testing and App Store review.
+    export_options[:testFlightInternalTestingOnly] = true if internal_only
+
+    ipa_path = build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      configuration: "Release",
+      export_method: "app-store",
+      export_options: export_options,
+      xcargs: "FLUTTER_BUILD_NAME=#{version} FLUTTER_BUILD_NUMBER=#{build_number}"
+    )
+
+    # Both paths upload to App Store Connect; the export option controls eligibility.
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: ipa_path,
+      skip_submission: true,
+      skip_waiting_for_build_processing: true
+    )
+  end
+end

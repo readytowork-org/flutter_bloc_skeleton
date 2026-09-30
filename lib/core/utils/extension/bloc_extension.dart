@@ -8,8 +8,8 @@ extension BlocExtensions<T> on BlocBase<T> {
       // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       notifier.notifyListeners();
     });
-    
-    // In a real app, you might want a way to cancel this, 
+
+    // In a real app, you might want a way to cancel this,
     // but for global singletons in service locator it's okay.
     return notifier;
   }

@@ -3,14 +3,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_push_notification_module/fcm_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../config.dart';
 import '../../features/auth/auth.dart';
 import '../../features/cart/cart_di.dart';
+import '../../features/optimization/bloc/optimization_bloc.dart';
 import '../../features/product/product_di.dart';
 
 import '../../features/profile/presentation/profile_di.dart';
-import '../../features/optimization/bloc/optimization_bloc.dart';
 import '../../firebase_options.dart';
 import '../../shared/cubit/locale_cubit.dart';
 import '../routes/app_routes.dart';
@@ -29,15 +31,20 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
 
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+
+  OneSignal.initialize(Config.oneSignalAppId);
+  // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
+  OneSignal.Notifications.requestPermission(true);
+
   sl.registerLazySingleton(
     () => const FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      aOptions: AndroidOptions(),
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     ),
   );
-
-
-
 
   /// Token Storage
   final tokenStorage = SecureTokenStorage(sl<FlutterSecureStorage>());
@@ -98,8 +105,6 @@ Future<void> init() async {
   );
 }
 
-
 Future<void> initFirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
 }

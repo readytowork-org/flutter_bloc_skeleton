@@ -30,9 +30,9 @@ class OptimizationState extends Equatable {
 
   @override
   List<Object?> get props => [
-        autoDownloadOnWifi,
-        dataSaverMode,
-        connectivityStatus,
-        isSyncing,
-      ];
+    autoDownloadOnWifi,
+    dataSaverMode,
+    connectivityStatus,
+    isSyncing,
+  ];
 }

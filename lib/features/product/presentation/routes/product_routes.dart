@@ -57,9 +57,7 @@ abstract final class ProductRoutes {
           name: ProductRoute.editProduct.routeName,
           builder: (BuildContext context, GoRouterState state) => BlocProvider(
             create: (context) => sl<EditProductBloc>(),
-            child: EditProductPage(
-              product: state.extra as ProductEntity,
-            ),
+            child: EditProductPage(product: state.extra as ProductEntity),
           ),
         ),
         GoRoute(
