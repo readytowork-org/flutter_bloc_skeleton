@@ -102,7 +102,7 @@ final class JwtInterceptor extends Interceptor {
   // ── POST /auth/refresh ─────────────────────────────────────────────────────
   Future<void> _refreshAccessToken() async {
     final refreshToken = await _tokenStorage.getRefreshToken();
-    log('Retrying request 1 to ${refreshToken} with new access token');
+    log('Retrying request 1 to $refreshToken with new access token');
 
     if (refreshToken == null) {
       throw const RefreshTokenExpiredException();

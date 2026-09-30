@@ -1,0 +1,157 @@
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc_skeleton/features/auth/presentation/widgets/molecules/login_page_view.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
+
+import 'package:flutter_bloc_skeleton/features/auth/presentation/state_management/auth_bloc.dart';
+import 'package:flutter_bloc_skeleton/features/auth/presentation/routes/auth_route_paths.dart';
+import 'package:flutter_bloc_skeleton/features/auth/presentation/routes/auth_routes.dart';
+import 'package:flutter_bloc_skeleton/l10n/s.dart';
+
+import '../../../../helpers/test_helpers.dart';
+
+void main() {
+  setUpAll(() {
+    registerAuthFallbacks();
+  });
+
+  late MockAuthBloc mockAuthBloc;
+
+  setUp(() {
+    mockAuthBloc = MockAuthBloc();
+    when(() => mockAuthBloc.state).thenReturn(const AuthState.initial());
+    when(() => mockAuthBloc.stream).thenAnswer((_) => const Stream.empty());
+    when(() => mockAuthBloc.close()).thenAnswer((_) async {});
+  });
+
+  // No close() needed for mocks
+
+  group('LoginPageView', () {
+    // ── UI rendering ──────────────────────────────────────────────────────────
+
+    testWidgets('shows welcome text, login button, and register button', (
+      tester,
+    ) async {
+      await tester.pumpApp(const LoginPageView(), authBloc: mockAuthBloc);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Welcome Back 👋'), findsOneWidget);
+      expect(find.text('Login'), findsOneWidget);
+      expect(find.text('Register'), findsOneWidget);
+    });
+
+    testWidgets('Forgot Password link opens the password recovery screen', (
+      tester,
+    ) async {
+      final router = GoRouter(
+        initialLocation: AuthRoute.login.path,
+        routes: AuthRoutes.routes,
+      );
+      await tester.pumpWidget(
+        BlocProvider<AuthBloc>.value(
+          value: mockAuthBloc,
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: S.localizationsDelegates,
+            supportedLocales: S.supportedLocales,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Forgot Password?'));
+      await tester.tap(find.text('Forgot Password?'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          'Enter your email address and we’ll send you a link to reset your password.',
+        ),
+        findsOneWidget,
+      );
+      router.dispose();
+    });
+
+    // ── Form validation guard ─────────────────────────────────────────────────
+
+    testWidgets(
+      'tapping Login with empty username does NOT call AuthBloc.add',
+      (tester) async {
+        await tester.pumpApp(const LoginPageView(), authBloc: mockAuthBloc);
+        await tester.pumpAndSettle();
+
+        // Clear the pre-filled username
+        await tester.enterText(
+          find.byWidgetPredicate(
+            (w) => w is FormBuilderTextField && w.name == 'username',
+          ),
+          '',
+        );
+
+        await tester.tap(find.text('Login'));
+        await tester.pumpAndSettle();
+
+        // AuthBloc must NOT receive any event
+        verifyNever(() => mockAuthBloc.add(any()));
+      },
+    );
+
+    testWidgets(
+      'tapping Login with valid pre-filled values fires loginRequested',
+      (tester) async {
+        await tester.pumpApp(const LoginPageView(), authBloc: mockAuthBloc);
+        await tester.pumpAndSettle();
+
+        // Form is pre-filled with emilys / emilyspass — both valid
+        await tester.tap(find.text('Login'));
+        await tester.pumpAndSettle();
+
+        verify(
+          () => mockAuthBloc.add(
+            AuthEvent.loginRequested(
+              userMap: {'username': 'emilys', 'password': 'emilyspass'},
+            ),
+          ),
+        ).called(1);
+      },
+    );
+
+    // ── AuthState reactions ───────────────────────────────────────────────────
+
+    testWidgets('AuthState.failure shows a SnackBar with the error message', (
+      tester,
+    ) async {
+      whenListen(
+        mockAuthBloc,
+        Stream.fromIterable([
+          const AuthState.initial(),
+          const AuthState.failure(message: 'Invalid credentials'),
+        ]),
+        initialState: const AuthState.initial(),
+      );
+
+      await tester.pumpApp(const LoginPageView(), authBloc: mockAuthBloc);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.text('Invalid credentials'), findsOneWidget);
+    });
+
+    testWidgets(
+      'AuthState.loading shows CircularProgressIndicator on Login button',
+      (tester) async {
+        when(() => mockAuthBloc.state).thenReturn(const AuthState.loading());
+
+        await tester.pumpApp(const LoginPageView(), authBloc: mockAuthBloc);
+        await tester.pump(const Duration(milliseconds: 100));
+
+        // Your .withLoading() extension replaces button content with a spinner
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      },
+    );
+  });
+}

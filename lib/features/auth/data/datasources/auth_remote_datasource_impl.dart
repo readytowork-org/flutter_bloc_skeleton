@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/enum/index.dart';
 import '../../domain/entities/token_entity.dart';
@@ -15,7 +16,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> login(String username, String password) async {
     final response = await _dioClient.post(
-      '/auth/login',
+      ApiEndpoints.login,
       data: {'username': username, 'password': password, 'expiresInMins': 1},
     );
 
@@ -23,9 +24,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<void> forgotPassword(String email) async {
+    await _dioClient.post(ApiEndpoints.forgotPassword, data: {'email': email});
+  }
+
+  @override
   Future<TokenEntity> refreshToken(String token) async {
     final response = await _dioClient.post(
-      '/auth/refresh',
+      ApiEndpoints.refreshToken,
       data: {'refreshToken': token},
     );
 

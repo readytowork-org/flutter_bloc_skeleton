@@ -253,12 +253,44 @@ void main(List<String> args) async {
   }
 
   // 7. Generate DI and Routing
-  _generateDI(targetTag, endpoints, listEndpoints, '$baseDir');
+  _generateDI(targetTag, endpoints, listEndpoints, baseDir);
   _generateRoutePaths(targetTag, pageTypes, '$baseDir/presentation/routes');
   _generateRoutes(targetTag, pageTypes, '$baseDir/presentation/routes');
-  _generateFeatureEntry(targetTag, '$baseDir');
+  _generateFeatureEntry(targetTag, baseDir);
+
+  // 8. Update Global ApiEndpoints
+  _updateApiEndpoints(endpoints);
 
   print('✅ Feature $targetTag generated successfully in $baseDir');
+}
+
+void _updateApiEndpoints(List<GeneratedEndpoint> endpoints) {
+  final file = File('lib/core/network/api_endpoints.dart');
+  if (!file.existsSync()) return;
+
+  List<String> lines = file.readAsLinesSync();
+  final lastLineIndex = lines.lastIndexWhere((line) => line.contains('}'));
+  if (lastLineIndex == -1) return;
+
+  bool updated = false;
+  for (final ep in endpoints) {
+    final constantName = ep.methodName;
+    final exists = lines.any(
+      (line) => line.contains('static const String $constantName ='),
+    );
+    if (!exists) {
+      lines.insert(
+        lastLineIndex,
+        "  static const String $constantName = '${ep.path}';",
+      );
+      updated = true;
+    }
+  }
+
+  if (updated) {
+    file.writeAsStringSync(lines.join('\n'));
+    print('📝 Updated lib/core/network/api_endpoints.dart with new constants.');
+  }
 }
 
 class GeneratedEndpoint {
@@ -584,19 +616,27 @@ void _generateUseCase(
   StringBuffer body = StringBuffer();
   body.writeln("import '../../../../core/network/api_result.dart';");
   body.writeln("import '../repositories/$repoFileName';");
+
+  final List<String> imports = [];
   if (endpoint.returnTypeRaw != 'dynamic') {
-    body.writeln(
+    imports.add(
       "import '../entities/${_toSnakeCase(_cleanName(endpoint.returnTypeRaw))}_entity.dart';",
     );
   }
   if (reqClean != null) {
-    body.writeln("import '../entities/${_toSnakeCase(reqClean)}_entity.dart';");
+    imports.add("import '../entities/${_toSnakeCase(reqClean)}_entity.dart';");
   }
+  imports.sort();
+  for (final imp in imports) {
+    body.writeln(imp);
+  }
+
   body.writeln();
   body.writeln("class $ucName {");
   body.writeln("  final $repoName _repository;");
   body.writeln();
   body.writeln("  $ucName(this._repository);");
+
   body.writeln();
   if (reqClean != null) {
     body.writeln(
@@ -624,22 +664,29 @@ void _generateRepositoryInterface(
   StringBuffer body = StringBuffer();
   body.writeln("import '../../../../core/network/api_result.dart';");
 
+  final List<String> imports = [];
   final Set<String> neededRawNames = {};
   for (final ep in endpoints) {
     if (ep.returnTypeRaw != 'dynamic') neededRawNames.add(ep.returnTypeRaw);
+    final reqRef = _getSchemaRef(ep.details['requestBody'] ?? {});
+    if (reqRef != null) neededRawNames.add(reqRef);
   }
   for (final raw in neededRawNames) {
-    body.writeln(
+    imports.add(
       "import '../entities/${_toSnakeCase(_cleanName(raw))}_entity.dart';",
     );
+  }
+  imports.sort();
+  for (final imp in imports) {
+    body.writeln(imp);
   }
 
   body.writeln();
   body.writeln("abstract class $name {");
-
   for (final ep in endpoints) {
     final reqRef = _getSchemaRef(ep.details['requestBody'] ?? {});
     final reqClean = reqRef != null ? _cleanName(reqRef) : null;
+
     if (reqClean != null) {
       body.writeln(
         "  Future<ApiResult<${ep.returnTypeEntity}>> ${ep.methodName}(${reqClean}Entity input);",
@@ -650,7 +697,6 @@ void _generateRepositoryInterface(
       );
     }
   }
-
   body.writeln("}");
 
   File('$outputDir/$fileName').writeAsStringSync(body.toString());
@@ -665,14 +711,22 @@ void _generateRemoteDataSource(
   final fileName = '${_toSnakeCase(feature)}_remote_datasource.dart';
 
   StringBuffer body = StringBuffer();
+
+  final List<String> modelImports = [];
   final Set<String> neededModels = {};
   for (final ep in endpoints) {
     if (ep.returnTypeRaw != 'dynamic') neededModels.add(ep.returnTypeRaw);
+    final reqRef = _getSchemaRef(ep.details['requestBody'] ?? {});
+    if (reqRef != null) neededModels.add(reqRef);
   }
   for (final raw in neededModels) {
-    body.writeln(
+    modelImports.add(
       "import '../models/${_toSnakeCase(_cleanName(raw))}_model.dart';",
     );
+  }
+  modelImports.sort();
+  for (final imp in modelImports) {
+    body.writeln(imp);
   }
 
   body.writeln();
@@ -706,17 +760,25 @@ void _generateRemoteDataSourceImpl(
   final interfaceFileName = '${_toSnakeCase(feature)}_remote_datasource.dart';
 
   StringBuffer body = StringBuffer();
+  body.writeln("import '../../../../core/network/api_endpoints.dart';");
   body.writeln("import '../../../../core/network/dio_client.dart';");
   body.writeln("import '$interfaceFileName';");
 
   final Set<String> neededModels = {};
   for (final ep in endpoints) {
     if (ep.returnTypeRaw != 'dynamic') neededModels.add(ep.returnTypeRaw);
+    final reqRef = _getSchemaRef(ep.details['requestBody'] ?? {});
+    if (reqRef != null) neededModels.add(reqRef);
   }
+  final List<String> sortedModelImports = [];
   for (final raw in neededModels) {
-    body.writeln(
+    sortedModelImports.add(
       "import '../models/${_toSnakeCase(_cleanName(raw))}_model.dart';",
     );
+  }
+  sortedModelImports.sort();
+  for (final imp in sortedModelImports) {
+    body.writeln(imp);
   }
 
   body.writeln();
@@ -736,14 +798,14 @@ void _generateRemoteDataSourceImpl(
         "  Future<${ep.returnTypeModel}> ${ep.methodName}(${reqClean}Model input) async {",
       );
       body.writeln(
-        "    final response = await _dioClient.${ep.method}('${ep.path}', data: input.toJson());",
+        "    final response = await _dioClient.${ep.method}(ApiEndpoints.${ep.methodName}, data: input.toJson());",
       );
     } else {
       body.writeln(
         "  Future<${ep.returnTypeModel}> ${ep.methodName}() async {",
       );
       body.writeln(
-        "    final response = await _dioClient.${ep.method}('${ep.path}');",
+        "    final response = await _dioClient.${ep.method}(ApiEndpoints.${ep.methodName});",
       );
     }
     if (ep.returnTypeRaw == 'dynamic') {
@@ -779,21 +841,38 @@ void _generateRepositoryImpl(
   final dsFileName = '${_toSnakeCase(feature)}_remote_datasource.dart';
 
   StringBuffer body = StringBuffer();
-  body.writeln("import '../../../../core/network/failures.dart';");
+  body.writeln("import '../../../../core/error/failures.dart';");
   body.writeln("import '../../../../core/network/api_result.dart';");
   body.writeln("import '../../domain/repositories/$interfaceFileName';");
   body.writeln("import '../datasources/$dsFileName';");
 
-  final Set<String> neededRawNames = {};
+  // Only import entity+model for types used directly in method signatures (request bodies).
+  // Return-type entities/models are brought in transitively via the datasource import.
+  final List<String> sortedImports = [];
+  final Set<String> requestBodyNames = {};
   for (final ep in endpoints) {
-    if (ep.returnTypeRaw != 'dynamic') neededRawNames.add(ep.returnTypeRaw);
     final reqRef = _getSchemaRef(ep.details['requestBody'] ?? {});
-    if (reqRef != null) neededRawNames.add(reqRef);
+    if (reqRef != null) requestBodyNames.add(reqRef);
   }
-  for (final raw in neededRawNames) {
-    body.writeln(
-      "import '../../domain/entities/${_toSnakeCase(_cleanName(raw))}_entity.dart';",
-    );
+  // Also add the return-type entity for each endpoint (used in ApiResult<X>)
+  final Set<String> returnTypeNames = {};
+  for (final ep in endpoints) {
+    if (ep.returnTypeRaw != 'dynamic') returnTypeNames.add(ep.returnTypeRaw);
+  }
+  for (final raw in returnTypeNames) {
+    final snake = _toSnakeCase(_cleanName(raw));
+    sortedImports.add("import '../../domain/entities/${snake}_entity.dart';");
+  }
+  for (final raw in requestBodyNames) {
+    final snake = _toSnakeCase(_cleanName(raw));
+    if (!returnTypeNames.contains(raw)) {
+      sortedImports.add("import '../../domain/entities/${snake}_entity.dart';");
+    }
+    sortedImports.add("import '../models/${snake}_model.dart';");
+  }
+  sortedImports.sort();
+  for (final imp in sortedImports) {
+    body.writeln(imp);
   }
 
   body.writeln();
@@ -803,15 +882,28 @@ void _generateRepositoryImpl(
   body.writeln("  $name(this._remoteDataSource);");
 
   for (final ep in endpoints) {
+    final reqRef = _getSchemaRef(ep.details['requestBody'] ?? {});
+    final reqClean = reqRef != null ? _cleanName(reqRef) : null;
+
     body.writeln();
     body.writeln("  @override");
-    body.writeln(
-      "  Future<ApiResult<${ep.returnTypeEntity}>> ${ep.methodName}() async {",
-    );
-    body.writeln("    try {");
-    body.writeln(
-      "      final result = await _remoteDataSource.${ep.methodName}();",
-    );
+    if (reqClean != null) {
+      body.writeln(
+        "  Future<ApiResult<${ep.returnTypeEntity}>> ${ep.methodName}(${reqClean}Entity input) async {",
+      );
+      body.writeln("    try {");
+      body.writeln(
+        "      final result = await _remoteDataSource.${ep.methodName}(${reqClean}Model.fromEntity(input));",
+      );
+    } else {
+      body.writeln(
+        "  Future<ApiResult<${ep.returnTypeEntity}>> ${ep.methodName}() async {",
+      );
+      body.writeln("    try {");
+      body.writeln(
+        "      final result = await _remoteDataSource.${ep.methodName}();",
+      );
+    }
     if (ep.returnTypeRaw == 'dynamic') {
       body.writeln("      return ApiResult.success(result);");
     } else {
@@ -952,16 +1044,16 @@ void _generateBloc(
     buffer.writeln(
       "  Future<ApiResult<PaginatedData<$returnType>>> fetchItems(PaginationParams params) async {",
     );
-    buffer.writeln(
-      "    final result = await _useCase(); // Note: Add params to usecase if needed",
-    );
+    buffer.writeln("    final result = await _useCase();");
     buffer.writeln("    return result.when(");
     buffer.writeln("      success: (data) => ApiResult.success(");
     buffer.writeln("        PaginatedData<$returnType>(");
     buffer.writeln(
-      "          items: data.items, // Adjust based on your API response structure",
+      "          items: data.${_toCamelCase(_toSnakeCase(itemType))}s ?? [],",
     );
-    buffer.writeln("          isEnd: data.isEnd,");
+    buffer.writeln(
+      "          isEnd: (data.skip ?? 0) + (data.limit ?? 0) >= (data.total ?? 0),",
+    );
     buffer.writeln("        ),");
     buffer.writeln("      ),");
     buffer.writeln("      failure: (failure) => ApiResult.failure(failure),");
@@ -982,11 +1074,7 @@ void _generateBloc(
     buffer.writeln("import '${snakeName}_state.dart';");
     final reqRef = _getSchemaRef(endpoint.details['requestBody'] ?? {});
     final reqClean = reqRef != null ? _cleanName(reqRef) : null;
-    if (reqClean != null) {
-      buffer.writeln(
-        "import '../../../domain/entities/${_toSnakeCase(reqClean)}_entity.dart';",
-      );
-    }
+    // Input entity import lives in the event file; skip it in the bloc file.
     buffer.writeln();
     final statePrefix = _capitalize(cleanName);
     buffer.writeln("class $blocName extends Bloc<$eventName, $stateName> {");
@@ -994,6 +1082,9 @@ void _generateBloc(
     buffer.writeln();
     buffer.writeln(
       "  $blocName(this._useCase) : super(const ${statePrefix}Initial()) {",
+    );
+    buffer.writeln(
+      "    on<${_capitalize(cleanName)}Started>((event, emit) => emit(const ${statePrefix}Initial()));",
     );
     buffer.writeln("    on<${_capitalize(cleanName)}Executed>(_onExecuted);");
     buffer.writeln("  }");
@@ -1033,7 +1124,10 @@ void _generateBloc(
     eventBuffer.writeln("part '${snakeName}_event.freezed.dart';");
     eventBuffer.writeln();
     eventBuffer.writeln("@freezed");
-    eventBuffer.writeln(" class $eventName with _\$$eventName {");
+    eventBuffer.writeln("abstract class $eventName with _\$$eventName {");
+    eventBuffer.writeln(
+      "  const factory $eventName.started() = ${_capitalize(cleanName)}Started;",
+    );
     if (reqClean != null) {
       eventBuffer.writeln(
         "  const factory $eventName.executed({required ${reqClean}Entity input}) = ${_capitalize(cleanName)}Executed;",
@@ -1053,9 +1147,11 @@ void _generateBloc(
     stateBuffer.writeln(
       "import 'package:freezed_annotation/freezed_annotation.dart';",
     );
-    stateBuffer.writeln(
-      "import '../../../../../shared/state/base_state.dart';",
-    );
+    if (isGet) {
+      stateBuffer.writeln(
+        "import '../../../../../shared/state/base_state.dart';",
+      );
+    }
     if (endpoint.returnTypeRaw != 'dynamic') {
       stateBuffer.writeln(
         "import '../../../domain/entities/${_toSnakeCase(_cleanName(endpoint.returnTypeRaw))}_entity.dart';",
@@ -1067,13 +1163,13 @@ void _generateBloc(
     stateBuffer.writeln("@freezed");
     if (isGet) {
       stateBuffer.writeln(
-        "sealed class $stateName with _\$$stateName implements BaseState<$returnType> {",
+        "sealed class $stateName with _\$$stateName implements BaseState {",
       );
-      stateBuffer.writeln("  @Implements<BaseInitial<$returnType>>()");
+      stateBuffer.writeln("  @Implements<BaseInitial>()");
       stateBuffer.writeln(
         "  const factory $stateName.initial() = ${statePrefix}Initial;",
       );
-      stateBuffer.writeln("  @Implements<BaseLoading<$returnType>>()");
+      stateBuffer.writeln("  @Implements<BaseLoading>()");
       stateBuffer.writeln(
         "  const factory $stateName.loading() = ${statePrefix}Loading;",
       );
@@ -1081,7 +1177,7 @@ void _generateBloc(
       stateBuffer.writeln(
         "  const factory $stateName.loaded({required $returnType res}) = ${statePrefix}Loaded;",
       );
-      stateBuffer.writeln("  @Implements<BaseFailure<$returnType>>()");
+      stateBuffer.writeln("  @Implements<BaseFailure>()");
       stateBuffer.writeln(
         "  const factory $stateName.failure({required String message}) = ${statePrefix}Failure;",
       );
@@ -1220,14 +1316,12 @@ void _generateDetailsPage(
 ) {
   final featureName = _toSnakeCase(featureTag);
   final blocName = '${_capitalize(ep.methodName)}Bloc';
-  final entityName = ep.returnTypeEntity;
   final fileName = '${featureName}_details_page.dart';
 
   final buffer = StringBuffer();
   buffer.writeln("import 'package:flutter/material.dart';");
   buffer.writeln("import 'package:flutter_bloc/flutter_bloc.dart';");
   buffer.writeln("import '../../../../../core/di/service_locator.dart';");
-  buffer.writeln("import '../../../../../shared/state/base_state.dart';");
   buffer.writeln(
     "import '../../../../../shared/widgets/molecules/bloc_state_builder.dart';",
   );
@@ -1239,9 +1333,6 @@ void _generateDetailsPage(
   );
   buffer.writeln(
     "import '../bloc/get/${_toSnakeCase(ep.methodName)}_event.dart';",
-  );
-  buffer.writeln(
-    "import '../../domain/entities/${_toSnakeCase(_cleanName(ep.returnTypeRaw))}_entity.dart';",
   );
 
   buffer.writeln();
@@ -1308,14 +1399,12 @@ void _generateActionPage(
 ) {
   final featureName = _toSnakeCase(featureTag);
   final blocName = '${_capitalize(ep.methodName)}Bloc';
-  final entityName = ep.returnTypeEntity;
   final fileName = '${featureName}_${actionLabel.toLowerCase()}_page.dart';
 
   final buffer = StringBuffer();
   buffer.writeln("import 'package:flutter/material.dart';");
   buffer.writeln("import 'package:flutter_bloc/flutter_bloc.dart';");
   buffer.writeln("import '../../../../../core/di/service_locator.dart';");
-  buffer.writeln("import '../../../../../shared/state/base_state.dart';");
   buffer.writeln(
     "import '../../../../../shared/widgets/molecules/app_bloc_button.dart';",
   );
@@ -1338,11 +1427,7 @@ void _generateActionPage(
     );
   }
 
-  if (ep.returnTypeRaw != 'dynamic') {
-    buffer.writeln(
-      "import '../../domain/entities/${_toSnakeCase(_cleanName(ep.returnTypeRaw))}_entity.dart';",
-    );
-  }
+  // Return-type entity is not directly referenced in the page scaffold.
 
   buffer.writeln();
   final statePrefix = _capitalize(ep.methodName);
@@ -1381,7 +1466,7 @@ void _generateActionPage(
   buffer.writeln("                    },");
   if (reqClean != null) {
     buffer.writeln(
-      "                    onTap: (bloc) => bloc.add(${statePrefix}Event.executed(input: const ${reqClean}Entity())),",
+      "                    onTap: (bloc) => bloc.add(${statePrefix}Event.executed(input: const ${reqClean}Entity(todo: ''))),",
     );
   } else {
     buffer.writeln(
@@ -1499,7 +1584,7 @@ void _generateRoutePaths(
   buffer.writeln("  String get routeName => switch (this) {");
   for (final type in pageTypes) {
     buffer.writeln(
-      "    ${capFeature}Route.$type => '${capFeature}${_capitalize(type)}',",
+      "    ${capFeature}Route.$type => '$capFeature${_capitalize(type)}',",
     );
   }
   buffer.writeln("  };");
@@ -1519,7 +1604,7 @@ void _generateRoutes(
   final capFeature = _capitalize(featureTag);
   final buffer = StringBuffer();
 
-  buffer.writeln("import 'package:flutter/material.dart';");
+  // flutter/material is not directly needed in routes; go_router provides context.
   buffer.writeln("import 'package:go_router/go_router.dart';");
   for (final type in pageTypes) {
     buffer.writeln("import '../pages/${featureName}_${type}_page.dart';");

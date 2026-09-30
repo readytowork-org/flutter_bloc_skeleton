@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../pages/login_page.dart';
 import '../pages/register_page.dart';
+import '../pages/forgot_password_page.dart';
 import 'auth_route_paths.dart';
 
 /// Declares all GoRouter routes owned by the auth feature.
@@ -18,6 +19,12 @@ abstract final class AuthRoutes {
       name: AuthRoute.register.routeName,
       builder: (BuildContext context, GoRouterState state) =>
           const RegisterPage(),
+    ),
+    GoRoute(
+      path: AuthRoute.forgotPassword.path,
+      name: AuthRoute.forgotPassword.routeName,
+      builder: (BuildContext context, GoRouterState state) =>
+          const ForgotPasswordPage(),
     ),
   ];
 }

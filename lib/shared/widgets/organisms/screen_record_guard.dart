@@ -45,8 +45,10 @@ class _RecordingGuardState extends State<RecordingGuard> {
     // 1. Listen to the screenshot stream
     _streamSubscription = _noScreenshot.screenshotStream.listen((value) {
       if (!mounted) return;
-      debugPrint("Screenshot stream event: wasTaken=${value.wasScreenshotTaken}, isRecording=${value.isScreenRecording}");
-      
+      debugPrint(
+        "Screenshot stream event: wasTaken=${value.wasScreenshotTaken}, isRecording=${value.isScreenRecording}",
+      );
+
       setState(() {
         _latestSnapshot = value;
       });
@@ -114,7 +116,8 @@ class _RecordingGuardState extends State<RecordingGuard> {
       _noScreenshot.stopScreenshotListening();
       _noScreenshot.stopScreenRecordingListening();
       _noScreenshot.removeAllCallbacks();
-      _noScreenshot.screenshotOn(); // Cleanly restore capture capability on screen exit
+      _noScreenshot
+          .screenshotOn(); // Cleanly restore capture capability on screen exit
     } catch (e) {
       debugPrint("Disposal cleanup error: $e");
     }
@@ -126,9 +129,7 @@ class _RecordingGuardState extends State<RecordingGuard> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: Colors.white,
         icon: const Icon(
           Icons.security_rounded,
@@ -137,10 +138,7 @@ class _RecordingGuardState extends State<RecordingGuard> {
         ),
         title: const Text(
           'Security Violation',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         content: Text(
           'Taking screenshots is strictly prohibited on this page to protect sensitive account information.\n\n'
@@ -174,7 +172,9 @@ class _RecordingGuardState extends State<RecordingGuard> {
   Widget build(BuildContext context) {
     // Check if we are in Debug Mode and bypass is configured
     final bool isBypassed = kDebugMode && !SecurityService.enableInDebug;
-    debugPrint("RecordingGuard build: isBypassed=$isBypassed, enableInDebug=${SecurityService.enableInDebug}, activeRecording=$_isScreenRecordingActive");
+    debugPrint(
+      "RecordingGuard build: isBypassed=$isBypassed, enableInDebug=${SecurityService.enableInDebug}, activeRecording=$_isScreenRecordingActive",
+    );
 
     Widget currentChild = widget.child;
 

@@ -32,7 +32,10 @@ class ProductCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
                       color: AppColors.greyLight,
-                      child: const Icon(Icons.broken_image_outlined, color: AppColors.greyDark),
+                      child: const Icon(
+                        Icons.broken_image_outlined,
+                        color: AppColors.greyDark,
+                      ),
                     ),
                   ),
                 ),

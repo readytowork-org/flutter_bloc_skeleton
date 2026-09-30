@@ -12,19 +12,19 @@ class SEn extends S {
   String get authHome => 'Home';
 
   @override
-  String get authName => 'Full Name';
+  String get authName => 'Enter a Full Name';
 
   @override
-  String get authEmailAddress => 'Email Address';
+  String get authEmailAddress => 'Enter a Email Address';
 
   @override
-  String get authPhone => 'Phone';
+  String get authPhone => 'Enter Phone Number';
 
   @override
-  String get authFurigana => 'Furigana';
+  String get authFurigana => 'Enter a Furigana';
 
   @override
-  String get authPassword => 'Password';
+  String get authPassword => 'Enter a Password';
 
   @override
   String get authTest => 'test';

@@ -1,0 +1,81 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build an AAB and make it available on the internal testing track"
+  lane :internal do
+    upload_android_build(track: "internal", release_status: "completed")
+  end
+
+  desc "Build an AAB and create a production draft without sending it for review"
+  lane :production_draft do
+    upload_android_build(track: "production", release_status: "draft")
+  end
+
+  private_lane :upload_android_build do |options|
+    pubspec = File.read(File.expand_path("../../pubspec.yaml", __dir__))
+    version_line = pubspec.match(/^version:\s*['"]?(\d+\.\d+\.\d+)\+(\d+)['"]?\s*$/)
+    UI.user_error!("Set version: x.y.z+build in pubspec.yaml") unless version_line
+    version, pubspec_code = version_line[1], version_line[2].to_i
+    UI.user_error!("Android versionCode must be positive") unless pubspec_code.positive?
+
+    key_path = File.expand_path("play-service-account.json", __dir__)
+    UI.user_error!("Missing android/fastlane/play-service-account.json") unless File.file?(key_path)
+    UI.user_error!("Missing android/key.properties") unless File.file?(File.expand_path("../key.properties", __dir__))
+    UI.user_error!("Missing android/app/release-key.jks") unless File.file?(File.expand_path("../app/release-key.jks", __dir__))
+
+    package_name = ENV.fetch("ANDROID_PACKAGE_NAME")
+    require "supply"
+    require "supply/client"
+    play = Supply::Client.make_from_config(params: { json_key: key_path })
+    play.begin_edit(package_name: package_name)
+    begin
+      edit_id = play.current_edit.id
+      bundles = play.client.list_edit_bundles(package_name, edit_id).bundles || []
+      tracks = play.client.list_edit_tracks(package_name, edit_id).tracks || []
+    ensure
+      play.abort_current_edit if play.current_edit
+    end
+
+    releases = tracks.flat_map { |track| track.releases || [] }
+    used_codes = bundles.map { |bundle| bundle.version_code.to_i } +
+                 releases.flat_map { |release| (release.version_codes || []).map(&:to_i) }
+    generated_name = /\A\d+ \(#{Regexp.escape(version)}\)\z/
+    version_exists = releases.any? do |release|
+      release.name == version || release.name.to_s.match?(generated_name)
+    end
+
+    if version_exists
+      version_code = [pubspec_code, (used_codes.max || 0) + 1].max
+      UI.message("Android #{version} already exists on Google Play; using next build #{version_code}")
+    else
+      version_code = pubspec_code
+      if version_code <= (used_codes.max || 0)
+        UI.user_error!("Android #{version} is new, but pubspec build #{version_code} is not higher than the latest Google Play build #{used_codes.max}. Increase the +build in pubspec.yaml.")
+      end
+      UI.message("Android #{version} is new; using pubspec.yaml build #{version_code}")
+    end
+    UI.user_error!("Google Play versionCode cannot exceed 2100000000") if version_code > 2_100_000_000
+
+    Bundler.with_unbundled_env do
+      sh("cd .. && flutter build appbundle --release --build-name=#{version} --build-number=#{version_code}")
+    end
+
+    aab_path = File.expand_path("../../build/app/outputs/bundle/release/app-release.aab", __dir__)
+    UI.user_error!("AAB was not created: #{aab_path}") unless File.file?(aab_path)
+
+    upload_to_play_store(
+      package_name: package_name,
+      json_key: key_path,
+      aab: aab_path,
+      track: options.fetch(:track),
+      release_status: options.fetch(:release_status),
+      metadata_path: File.expand_path("metadata/android", __dir__),
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: false,
+      changes_not_sent_for_review: options.fetch(:track) == "production",
+      rescue_changes_not_sent_for_review: false
+    )
+  end
+end
