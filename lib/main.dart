@@ -8,6 +8,7 @@ import 'package:flutter/material.dart'
 
 import 'app.dart' show App;
 import 'core/di/service_locator.dart' as di;
+import 'core/security/screen_record_block.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

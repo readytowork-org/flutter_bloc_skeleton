@@ -92,3 +92,7 @@ Future<void> init() async {
     ),
   );
 }
+
+Future<void> initFirebase() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+}

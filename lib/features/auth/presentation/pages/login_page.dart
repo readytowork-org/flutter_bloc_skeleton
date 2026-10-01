@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../shared/widgets/organisms/screen_record_guard.dart';
 import '../widgets/molecules/login_page_view.dart';
 
 class LoginPage extends StatelessWidget {
@@ -7,6 +8,6 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const LoginPageView();
+    return RecordingGuard(child: const LoginPageView());
   }
 }
