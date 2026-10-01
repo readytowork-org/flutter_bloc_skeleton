@@ -13,7 +13,6 @@ class LoginInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return FormBuilder(
       key: formKey,
-      initialValue: {"username": "emilys", "password": "emilyspass"},
       child: Column(
         spacing: 10,
         mainAxisAlignment: MainAxisAlignment.center,

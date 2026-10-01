@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../../core/di/service_locator.dart';
 import '../data/datasources/profile_remote_datasource.dart';
 import '../data/datasources/profile_remote_datasource_impl.dart';
@@ -9,7 +11,7 @@ import 'state_management/get_profile_bloc/get_profile_bloc.dart';
 void initProfile() {
   // Data sources
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(sl()),
+    () => ProfileRemoteDataSourceImpl(FirebaseAuth.instance),
   );
   // Repositories
   sl.registerLazySingleton<ProfileRepository>(

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'get_product_category_bloc.dart';
@@ -9,6 +9,7 @@ part of 'get_product_category_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$GetProductCategoryEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductCategoryEvent);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductCategoryEvent);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductCategoryEvent()';
+    return 'GetProductCategoryEvent()';
 }
 
 
@@ -191,7 +192,7 @@ class _Started implements GetProductCategoryEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
 }
 
 
@@ -200,7 +201,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductCategoryEvent.started()';
+    return 'GetProductCategoryEvent.started()';
 }
 
 
@@ -223,7 +224,7 @@ class GetProductCategoryRequested implements GetProductCategoryEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductCategoryRequested);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductCategoryRequested);
 }
 
 
@@ -232,7 +233,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductCategoryEvent.getProductCategoryRequested()';
+    return 'GetProductCategoryEvent.getProductCategoryRequested()';
 }
 
 
@@ -250,7 +251,7 @@ mixin _$GetProductCategoryState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductCategoryState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductCategoryState);
 }
 
 
@@ -259,7 +260,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductCategoryState()';
+    return 'GetProductCategoryState()';
 }
 
 
@@ -439,7 +440,7 @@ class ProductCategoryInitial implements GetProductCategoryState, BaseInitial {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryInitial);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryInitial);
 }
 
 
@@ -448,7 +449,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductCategoryState.initial()';
+    return 'GetProductCategoryState.initial()';
 }
 
 
@@ -471,7 +472,7 @@ class ProductCategoryLoading implements GetProductCategoryState, BaseLoading {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryLoading);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryLoading);
 }
 
 
@@ -480,7 +481,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductCategoryState.loading()';
+    return 'GetProductCategoryState.loading()';
 }
 
 
@@ -493,7 +494,7 @@ String toString() {
 
 
 class ProductCategoryLoaded implements GetProductCategoryState, BaseLoaded<List<ProductCategoryEntity>> {
-  const ProductCategoryLoaded({required final  List<ProductCategoryEntity> res}): _res = res;
+  const ProductCategoryLoaded({required  List<ProductCategoryEntity> res}): _res = res;
   
 
  final  List<ProductCategoryEntity> _res;
@@ -514,16 +515,18 @@ $ProductCategoryLoadedCopyWith<ProductCategoryLoaded> get copyWith => _$ProductC
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryLoaded&&const DeepCollectionEquality().equals(other._res, _res));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryLoaded&&const DeepCollectionEquality().equals(other.res, _res));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_res));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_res));
+}
 
 @override
 String toString() {
-  return 'GetProductCategoryState.loaded(res: $res)';
+    return 'GetProductCategoryState.loaded(res: $res)';
 }
 
 
@@ -580,16 +583,18 @@ $ProductCategoryFailureCopyWith<ProductCategoryFailure> get copyWith => _$Produc
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryFailure&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryFailure&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode {
+    return Object.hash(runtimeType,message);
+}
 
 @override
 String toString() {
-  return 'GetProductCategoryState.failure(message: $message)';
+    return 'GetProductCategoryState.failure(message: $message)';
 }
 
 
@@ -641,7 +646,7 @@ class ProductCategoryEmpty implements GetProductCategoryState, BaseEmpty {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryEmpty);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductCategoryEmpty);
 }
 
 
@@ -650,7 +655,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductCategoryState.empty()';
+    return 'GetProductCategoryState.empty()';
 }
 
 

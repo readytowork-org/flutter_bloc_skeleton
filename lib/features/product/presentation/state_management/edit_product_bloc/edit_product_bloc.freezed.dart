@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'edit_product_bloc.dart';
@@ -9,6 +9,7 @@ part of 'edit_product_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$EditProductEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductEvent);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductEvent);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'EditProductEvent()';
+    return 'EditProductEvent()';
 }
 
 
@@ -191,7 +192,7 @@ class _Started implements EditProductEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
 }
 
 
@@ -200,7 +201,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'EditProductEvent.started()';
+    return 'EditProductEvent.started()';
 }
 
 
@@ -213,7 +214,7 @@ String toString() {
 
 
 class UpdatedProductRequested implements EditProductEvent {
-  const UpdatedProductRequested({required final  JsonMap productData, required this.id}): _productData = productData;
+  const UpdatedProductRequested({required  JsonMap productData, required this.id}): _productData = productData;
   
 
  final  JsonMap _productData;
@@ -235,16 +236,18 @@ $UpdatedProductRequestedCopyWith<UpdatedProductRequested> get copyWith => _$Upda
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdatedProductRequested&&const DeepCollectionEquality().equals(other._productData, _productData)&&(identical(other.id, id) || other.id == id));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdatedProductRequested&&const DeepCollectionEquality().equals(other.productData, _productData)&&(identical(other.id, id) || other.id == id));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_productData),id);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_productData),id);
+}
 
 @override
 String toString() {
-  return 'EditProductEvent.updatedProductRequested(productData: $productData, id: $id)';
+    return 'EditProductEvent.updatedProductRequested(productData: $productData, id: $id)';
 }
 
 
@@ -292,7 +295,7 @@ mixin _$EditProductState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductState);
 }
 
 
@@ -301,7 +304,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'EditProductState()';
+    return 'EditProductState()';
 }
 
 
@@ -475,7 +478,7 @@ class EditProductInitial implements EditProductState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductInitial);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductInitial);
 }
 
 
@@ -484,7 +487,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'EditProductState.initial()';
+    return 'EditProductState.initial()';
 }
 
 
@@ -507,7 +510,7 @@ class EditProductLoading implements EditProductState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductLoading);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductLoading);
 }
 
 
@@ -516,7 +519,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'EditProductState.loading()';
+    return 'EditProductState.loading()';
 }
 
 
@@ -544,16 +547,18 @@ $EditProductSuccessCopyWith<EditProductSuccess> get copyWith => _$EditProductSuc
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductSuccess&&(identical(other.product, product) || other.product == product));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductSuccess&&(identical(other.product, product) || other.product == product));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,product);
+int get hashCode {
+    return Object.hash(runtimeType,product);
+}
 
 @override
 String toString() {
-  return 'EditProductState.success(product: $product)';
+    return 'EditProductState.success(product: $product)';
 }
 
 
@@ -610,16 +615,18 @@ $EditProductFailureCopyWith<EditProductFailure> get copyWith => _$EditProductFai
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductFailure&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EditProductFailure&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode {
+    return Object.hash(runtimeType,message);
+}
 
 @override
 String toString() {
-  return 'EditProductState.failure(message: $message)';
+    return 'EditProductState.failure(message: $message)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'get_product_by_id_bloc.dart';
@@ -9,6 +9,7 @@ part of 'get_product_by_id_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$GetProductByIdEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductByIdEvent);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductByIdEvent);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductByIdEvent()';
+    return 'GetProductByIdEvent()';
 }
 
 
@@ -197,7 +198,7 @@ class _Started implements GetProductByIdEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
 }
 
 
@@ -206,7 +207,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductByIdEvent.started()';
+    return 'GetProductByIdEvent.started()';
 }
 
 
@@ -234,16 +235,18 @@ $GetProductByIdRequestedCopyWith<GetProductByIdRequested> get copyWith => _$GetP
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductByIdRequested&&(identical(other.id, id) || other.id == id));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductByIdRequested&&(identical(other.id, id) || other.id == id));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id);
+int get hashCode {
+    return Object.hash(runtimeType,id);
+}
 
 @override
 String toString() {
-  return 'GetProductByIdEvent.getProductByIdRequested(id: $id)';
+    return 'GetProductByIdEvent.getProductByIdRequested(id: $id)';
 }
 
 
@@ -300,16 +303,18 @@ $ProductUpdatedLocallyCopyWith<ProductUpdatedLocally> get copyWith => _$ProductU
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductUpdatedLocally&&(identical(other.product, product) || other.product == product));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductUpdatedLocally&&(identical(other.product, product) || other.product == product));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,product);
+int get hashCode {
+    return Object.hash(runtimeType,product);
+}
 
 @override
 String toString() {
-  return 'GetProductByIdEvent.productUpdatedLocally(product: $product)';
+    return 'GetProductByIdEvent.productUpdatedLocally(product: $product)';
 }
 
 
@@ -356,7 +361,7 @@ mixin _$GetProductByIdState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductByIdState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProductByIdState);
 }
 
 
@@ -365,7 +370,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductByIdState()';
+    return 'GetProductByIdState()';
 }
 
 
@@ -545,7 +550,7 @@ class ProductInitial implements GetProductByIdState, BaseInitial {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductInitial);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductInitial);
 }
 
 
@@ -554,7 +559,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductByIdState.initial()';
+    return 'GetProductByIdState.initial()';
 }
 
 
@@ -577,7 +582,7 @@ class ProductLoading implements GetProductByIdState, BaseLoading {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductLoading);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductLoading);
 }
 
 
@@ -586,7 +591,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductByIdState.loading()';
+    return 'GetProductByIdState.loading()';
 }
 
 
@@ -614,16 +619,18 @@ $ProductLoadedCopyWith<ProductLoaded> get copyWith => _$ProductLoadedCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductLoaded&&(identical(other.res, res) || other.res == res));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductLoaded&&(identical(other.res, res) || other.res == res));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,res);
+int get hashCode {
+    return Object.hash(runtimeType,res);
+}
 
 @override
 String toString() {
-  return 'GetProductByIdState.loaded(res: $res)';
+    return 'GetProductByIdState.loaded(res: $res)';
 }
 
 
@@ -680,16 +687,18 @@ $ProductFailureCopyWith<ProductFailure> get copyWith => _$ProductFailureCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductFailure&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductFailure&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode {
+    return Object.hash(runtimeType,message);
+}
 
 @override
 String toString() {
-  return 'GetProductByIdState.failure(message: $message)';
+    return 'GetProductByIdState.failure(message: $message)';
 }
 
 
@@ -741,7 +750,7 @@ class ProductEmpty implements GetProductByIdState, BaseEmpty {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductEmpty);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductEmpty);
 }
 
 
@@ -750,7 +759,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProductByIdState.empty()';
+    return 'GetProductByIdState.empty()';
 }
 
 

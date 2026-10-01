@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ProfileHeaderInfo extends StatelessWidget {
-  final String firstName;
-  final String lastName;
+  final String displayName;
   final String username;
 
   const ProfileHeaderInfo({
     super.key,
-    required this.firstName,
-    required this.lastName,
+    required this.displayName,
     required this.username,
   });
 
@@ -18,7 +16,7 @@ class ProfileHeaderInfo extends StatelessWidget {
     return Column(
       children: [
         Text(
-          '$firstName $lastName',
+          displayName,
           style: theme.textTheme.headlineMedium?.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.bold,
