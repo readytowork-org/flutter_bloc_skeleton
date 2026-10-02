@@ -1,5 +1,9 @@
 # Fastlane and GitHub Actions template
 
+CircleCI build and manually triggered upload workflows are documented in
+[`.circleci/README.md`](../.circleci/README.md). The trigger table below
+describes GitHub Actions only.
+
 This skeleton keeps application version and minimum build number in `pubspec.yaml` (`version: 1.0.0+1`). Replace the placeholder iOS bundle ID and Android `applicationId` with the registered app IDs before uploading. Do not copy another app's certificates, API keys, Firebase files, or secrets into this repository.
 
 ## What runs
