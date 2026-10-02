@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder;
 import 'package:go_router/go_router.dart';
 
+import '../../../../../shared/bloc/base_pagination_bloc.dart'
+    show PaginationState;
 import '../../../../../shared/widgets/organisms/bloc_pagination_view.dart';
 import '../../../domain/entities/product_entity.dart';
 import '../../routes/product_route_paths.dart';
@@ -8,6 +11,7 @@ import '../../state_management/get_all_products_bloc/product_pagination_bloc.dar
 
 import '../molecules/product_card.dart';
 import '../molecules/product_category.dart';
+import '../molecules/product_count_banner.dart';
 import '../molecules/product_search_bar.dart';
 
 class ProductView extends StatefulWidget {
@@ -30,7 +34,21 @@ class _ProductViewState extends State<ProductView> {
             spacing: 10,
             crossAxisAlignment: .start,
             mainAxisSize: .min,
-            children: [ProductSearchBar(), ProductCategory()],
+            children: [
+              BlocBuilder<
+                ProductPaginationBloc,
+                PaginationState<ProductEntity>
+              >(
+                builder: (context, state) {
+                  return ProductCountBanner(
+                    message: 'Products: ${state.data.length}',
+                  );
+                },
+              ),
+
+              ProductSearchBar(),
+              ProductCategory(),
+            ],
           ),
         ),
         Expanded(
