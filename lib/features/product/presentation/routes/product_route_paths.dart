@@ -3,13 +3,15 @@ enum ProductRoute {
   product,
   productDetail,
   addProduct,
-  editProduct;
+  editProduct,
+  featuredProduct;
 
   String get path => switch (this) {
     ProductRoute.product => '/',
     ProductRoute.productDetail => '/:id',
     ProductRoute.addProduct => '/add',
     ProductRoute.editProduct => '/edit/:id',
+    ProductRoute.featuredProduct => '/featured',
   };
 
   String get routeName => switch (this) {
@@ -17,5 +19,6 @@ enum ProductRoute {
     ProductRoute.productDetail => 'ProductDetail',
     ProductRoute.addProduct => 'AddProduct',
     ProductRoute.editProduct => 'EditProduct',
+    ProductRoute.featuredProduct => 'FeaturedProduct',
   };
 }
