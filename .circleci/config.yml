@@ -1,6 +1,6 @@
 version: 2.1
 
-# Pushes and PRs use "ci". Deployments require an explicit pipeline action.
+# Branch/PR pushes and version tags use "ci". Manual uploads select an action.
 parameters:
   action:
     type: enum
@@ -54,6 +54,19 @@ commands:
             bundle _4.0.20_ install --jobs 4 --retry 3
 
 jobs:
+  validate_release_tag:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Require a version tag on main
+          command: bash scripts/circleci-verify-production-ref.sh tag
+      - run:
+          name: Notify rejected release tag
+          when: on_fail
+          command: bash scripts/circleci-notify-slack.sh failure "Production release tag validation failed"
+
   ios_build:
     macos:
       xcode: "26.3.0"
@@ -121,12 +134,8 @@ jobs:
           condition: << parameters.production >>
           steps:
             - run:
-                name: Require main for a production upload
-                command: |
-                  test "$CIRCLE_BRANCH" = main && test -z "${CIRCLE_TAG:-}" || {
-                    echo 'Manual production upload must run from main' >&2
-                    exit 1
-                  }
+                name: Verify production source
+                command: bash scripts/circleci-verify-production-ref.sh
       - install_flutter
       - install_ios_fastlane
       - run:
@@ -166,12 +175,8 @@ jobs:
           condition: << parameters.production >>
           steps:
             - run:
-                name: Require main for a production draft
-                command: |
-                  test "$CIRCLE_BRANCH" = main && test -z "${CIRCLE_TAG:-}" || {
-                    echo 'Manual production draft must run from main' >&2
-                    exit 1
-                  }
+                name: Verify production source
+                command: bash scripts/circleci-verify-production-ref.sh
       - install_flutter
       - install_android_fastlane
       - run:
@@ -195,16 +200,56 @@ jobs:
           command: bash scripts/circleci-notify-slack.sh failure "Android << parameters.lane >> upload failed"
 
 workflows:
-  build:
-    when: pipeline.parameters.action == "ci" and not pipeline.git.tag
+  branch_ci:
+    when: pipeline.parameters.action == "ci" and not pipeline.git.tag and (pipeline.event.name == "push" or pipeline.event.name == "pull_request")
     jobs:
       - ios_build:
           context: flutter-skeleton-build
       - android_build:
           context: flutter-skeleton-build
+      - ios_deploy:
+          requires:
+            - ios_build
+          filters: pipeline.event.name == "push" and pipeline.git.branch == "develop"
+          lane: beta
+          context:
+            - flutter-skeleton-build
+            - flutter-skeleton-development
+      - android_deploy:
+          requires:
+            - android_build
+          filters: pipeline.event.name == "push" and pipeline.git.branch == "develop"
+          lane: internal
+          context:
+            - flutter-skeleton-build
+            - flutter-skeleton-development
 
-  testflight:
-    when: pipeline.parameters.action == "ios_testflight"
+  version_tag_release:
+    when: pipeline.parameters.action == "ci" and pipeline.event.name == "push" and pipeline.git.tag matches /^v[0-9]+\.[0-9]+\.[0-9]+$/
+    jobs:
+      - validate_release_tag:
+          filters: pipeline.git.tag matches /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          context: 
+            - flutter-skeleton-build
+      - ios_deploy:
+          requires:
+            - validate_release_tag
+          filters: pipeline.git.tag matches /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          lane: app_store_connect_upload
+          production: true
+          context: 
+            - flutter-skeleton-production
+      - android_deploy:
+          requires:
+            - validate_release_tag
+          filters: pipeline.git.tag matches /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          lane: production_draft
+          production: true
+          context: 
+            - flutter-skeleton-production
+
+  testflight_manual:
+    when: pipeline.parameters.action == "ios_testflight" and pipeline.event.name == "api" and not pipeline.git.tag
     jobs:
       - ios_deploy:
           lane: beta
@@ -212,8 +257,8 @@ workflows:
             - flutter-skeleton-build
             - flutter-skeleton-development
 
-  play_internal:
-    when: pipeline.parameters.action == "android_internal"
+  play_internal_manual:
+    when: pipeline.parameters.action == "android_internal" and pipeline.event.name == "api" and not pipeline.git.tag
     jobs:
       - android_deploy:
           lane: internal
@@ -221,18 +266,20 @@ workflows:
             - flutter-skeleton-build
             - flutter-skeleton-development
 
-  app_store_connect:
-    when: pipeline.parameters.action == "ios_production"
+  app_store_connect_manual:
+    when: pipeline.parameters.action == "ios_production" and pipeline.event.name == "api" and pipeline.git.branch == "main"
     jobs:
       - ios_deploy:
           lane: app_store_connect_upload
           production: true
-          context: flutter-skeleton-production
+          context: 
+            - flutter-skeleton-production
 
-  play_production_draft:
-    when: pipeline.parameters.action == "android_production"
+  play_production_draft_manual:
+    when: pipeline.parameters.action == "android_production" and pipeline.event.name == "api" and pipeline.git.branch == "main"
     jobs:
       - android_deploy:
           lane: production_draft
           production: true
-          context: flutter-skeleton-production
+          context: 
+            - flutter-skeleton-production
