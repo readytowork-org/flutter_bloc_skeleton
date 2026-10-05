@@ -25,6 +25,7 @@ dependencies:
   dio_cache_interceptor_hive_store: ^4.0.0
   flutter_screenutil: ^5.9.3
   flutter_secure_storage: ^11.2.0
+  supabase_flutter: ^2.8.3
   gsheets: ^0.5.0
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
