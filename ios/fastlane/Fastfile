@@ -52,13 +52,14 @@ platform :ios do
 
     app_identifier = ENV.fetch("FASTLANE_APP_IDENTIFIER")
     profile_name = ENV["LOCAL_SIGNING_PROFILE_NAME"]
+    ci = ENV["GITHUB_ACTIONS"] == "true" || ENV["CIRCLECI"] == "true"
     if profile_name && !profile_name.empty?
-      UI.user_error!("Local signing profile must not be used in GitHub Actions") if ENV["GITHUB_ACTIONS"] == "true"
+      UI.user_error!("Local signing profile must not be used in CI") if ci
       UI.message("Using installed local signing profile: #{profile_name}")
     else
-      setup_ci if ENV["GITHUB_ACTIONS"] == "true"
+      setup_ci if ci
       match(type: "appstore", readonly: true, api_key: api_key)
-      if ENV["GITHUB_ACTIONS"] == "true"
+      if ci
         identities = IO.popen(["security", "find-identity", "-v", "-p", "codesigning"], &:read)
         unless identities.include?("(#{ENV.fetch('FASTLANE_TEAM_ID')})")
           UI.user_error!("Match did not install an Apple Distribution signing identity. Re-export the certificate and private key as a .p12 without a file password, then re-import it into Match.")
