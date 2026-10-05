@@ -17,6 +17,12 @@ class ProductPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () async {
+              context.push(ProductRoute.featuredProduct.path);
+            },
+            icon: const Icon(Icons.star_outline),
+          ),
+          IconButton(
+            onPressed: () async {
               context.push(ProfileRoute.profile.path);
             },
             icon: const Icon(Icons.person_2_outlined),

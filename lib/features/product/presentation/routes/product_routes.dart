@@ -7,6 +7,7 @@ import '../../../../shared/bloc/base_pagination_bloc.dart' show PaginationFetch;
 import '../../domain/entities/product_entity.dart';
 import '../pages/add_product_page.dart';
 import '../pages/edit_product_page.dart';
+import '../pages/featured_product_page.dart';
 import '../pages/product_detail_page.dart';
 import '../pages/product_page.dart' show ProductPage;
 import '../state_management/add_product_bloc/add_product_bloc.dart';
@@ -61,6 +62,11 @@ abstract final class ProductRoutes {
                       product: state.extra as ProductEntity,
                     ),
                   ),
+            ),
+            GoRoute(
+              path: ProductRoute.featuredProduct.path,
+              name: ProductRoute.featuredProduct.routeName,
+              builder: (context, state) => const FeaturedProductPage(),
             ),
             GoRoute(
               path: ProductRoute.productDetail.path,
