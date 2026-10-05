@@ -1,5 +1,5 @@
 import '../../../../core/network/api_result.dart';
-import '../entities/token_entity.dart';
+import '../entities/user_entity.dart';
 import '../repositories/auth_repository.dart';
 
 class SessionUseCase {
@@ -7,7 +7,7 @@ class SessionUseCase {
 
   SessionUseCase(this._repository);
 
-  Future<ApiResult<TokenEntity>> call() async {
+  Future<ApiResult<UserEntity>> call() async {
     return await _repository.getCurrentSession();
   }
 }

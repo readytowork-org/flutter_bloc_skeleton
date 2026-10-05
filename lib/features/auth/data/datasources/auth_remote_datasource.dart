@@ -1,9 +1,9 @@
-import '../../domain/entities/token_entity.dart';
+import '../../../../core/utils/typedf/index.dart';
 import '../models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<UserModel> login(String username, String password);
-  Future<void> forgotPassword(String email);
-  Future<TokenEntity> refreshToken(String token);
-  Future<TokenEntity> getCurrentSession();
+  Future<UserModel> login(JsonMap user);
+  Future<UserModel> signup(JsonMap user);
+  Future<UserModel?> getCurrentSession();
+  Future<void> logout();
 }

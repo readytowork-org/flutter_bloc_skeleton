@@ -1,54 +1,87 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../../core/network/api_endpoints.dart';
-import '../../../../core/network/dio_client.dart';
-import '../../../../core/utils/enum/index.dart';
-import '../../domain/entities/token_entity.dart';
+import '../../../../core/utils/typedf/index.dart' show JsonMap;
 import '../models/user_model.dart';
 import 'auth_remote_datasource.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final DioClient _dioClient;
-  final FlutterSecureStorage _storage;
+  final FirebaseAuth _firebaseAuth;
 
-  AuthRemoteDataSourceImpl(this._dioClient, this._storage);
+  AuthRemoteDataSourceImpl(this._firebaseAuth);
 
   @override
-  Future<UserModel> login(String username, String password) async {
-    final response = await _dioClient.post(
-      ApiEndpoints.login,
-      data: {'username': username, 'password': password, 'expiresInMins': 1},
-    );
+  Future<UserModel> login(JsonMap user) async {
+    try {
+      final credential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: user['email'] as String,
+        password: user['password'] as String,
+      );
 
-    return UserModel.fromJson(response.data);
+      if (credential.user == null) {
+        throw FirebaseAuthException(
+          code: 'user-not-found',
+          message: 'User payload missing from Firebase authentication.',
+        );
+      }
+
+      return UserModel.fromFirebase(credential.user!);
+    } on FirebaseAuthException {
+      rethrow;
+    } catch (e) {
+      throw Exception('An unexpected error occurred during login: $e');
+    }
   }
 
   @override
-  Future<void> forgotPassword(String email) async {
-    await _dioClient.post(ApiEndpoints.forgotPassword, data: {'email': email});
+  Future<UserModel> signup(JsonMap user) async {
+    try {
+      final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: user['email'] as String,
+        password: user['password'] as String,
+      );
+
+      if (credential.user == null) {
+        throw FirebaseAuthException(
+          code: 'missing-user',
+          message: 'User payload missing from Firebase registration.',
+        );
+      }
+
+      // If a display name is provided in the map, update the Firebase profile
+      if (user.containsKey('displayName') && user['displayName'] != null) {
+        await credential.user!.updateDisplayName(user['displayName'] as String);
+        // Reload to accurately refresh the cached currentUser profile data
+        await credential.user!.reload();
+      }
+
+      final updatedUser = _firebaseAuth.currentUser ?? credential.user!;
+      return UserModel.fromFirebase(updatedUser);
+    } on FirebaseAuthException {
+      rethrow;
+    } catch (e) {
+      throw Exception('An unexpected error occurred during signup: $e');
+    }
   }
 
   @override
-  Future<TokenEntity> refreshToken(String token) async {
-    final response = await _dioClient.post(
-      ApiEndpoints.refreshToken,
-      data: {'refreshToken': token},
-    );
-
-    return TokenEntity(
-      accessToken: response.data['accessToken'],
-      refreshToken: response.data['refreshToken'],
-    );
+  Future<UserModel?> getCurrentSession() async {
+    try {
+      final currentUser = _firebaseAuth.currentUser;
+      if (currentUser != null) {
+        return UserModel.fromFirebase(currentUser);
+      }
+      return null;
+    } catch (e) {
+      throw Exception('Failed to retrieve current user session: $e');
+    }
   }
 
   @override
-  Future<TokenEntity> getCurrentSession() async {
-    final accessToken = await _storage.read(
-      key: SecureStorageKey.bearerToken.name,
-    );
-    final refreshToken = await _storage.read(
-      key: SecureStorageKey.refreshToken.name,
-    );
-    return TokenEntity(accessToken: accessToken, refreshToken: refreshToken);
+  Future<void> logout() async {
+    try {
+      await _firebaseAuth.signOut();
+    } catch (e) {
+      throw Exception('Failed to log out from Firebase session: $e');
+    }
   }
 }

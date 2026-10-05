@@ -18,11 +18,10 @@ class ProfileHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 40),
-          ProfileAvatar(imageUrl: user.profile),
+          ProfileAvatar(imageUrl: user.profileUrl),
           const SizedBox(height: 16),
           ProfileHeaderInfo(
-            firstName: user.firstName,
-            lastName: user.lastName,
+            displayName: user.displayName,
             username: user.username,
           ),
           const SizedBox(height: 16),

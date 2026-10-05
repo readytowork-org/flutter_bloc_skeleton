@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'add_product_bloc.dart';
@@ -9,6 +9,7 @@ part of 'add_product_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$AddProductEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductEvent);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductEvent);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AddProductEvent()';
+    return 'AddProductEvent()';
 }
 
 
@@ -191,7 +192,7 @@ class _Started implements AddProductEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
 }
 
 
@@ -200,7 +201,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AddProductEvent.started()';
+    return 'AddProductEvent.started()';
 }
 
 
@@ -213,7 +214,7 @@ String toString() {
 
 
 class AddProductRequested implements AddProductEvent {
-  const AddProductRequested({required final  JsonMap productData}): _productData = productData;
+  const AddProductRequested({required  JsonMap productData}): _productData = productData;
   
 
  final  JsonMap _productData;
@@ -234,16 +235,18 @@ $AddProductRequestedCopyWith<AddProductRequested> get copyWith => _$AddProductRe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductRequested&&const DeepCollectionEquality().equals(other._productData, _productData));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductRequested&&const DeepCollectionEquality().equals(other.productData, _productData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_productData));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_productData));
+}
 
 @override
 String toString() {
-  return 'AddProductEvent.addProductRequested(productData: $productData)';
+    return 'AddProductEvent.addProductRequested(productData: $productData)';
 }
 
 
@@ -290,7 +293,7 @@ mixin _$AddProductState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductState);
 }
 
 
@@ -299,7 +302,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AddProductState()';
+    return 'AddProductState()';
 }
 
 
@@ -473,7 +476,7 @@ class AddProductInitial implements AddProductState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductInitial);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductInitial);
 }
 
 
@@ -482,7 +485,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AddProductState.initial()';
+    return 'AddProductState.initial()';
 }
 
 
@@ -505,7 +508,7 @@ class AddProductLoading implements AddProductState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductLoading);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductLoading);
 }
 
 
@@ -514,7 +517,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AddProductState.loading()';
+    return 'AddProductState.loading()';
 }
 
 
@@ -542,16 +545,18 @@ $AddProductSuccessCopyWith<AddProductSuccess> get copyWith => _$AddProductSucces
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductSuccess&&(identical(other.product, product) || other.product == product));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductSuccess&&(identical(other.product, product) || other.product == product));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,product);
+int get hashCode {
+    return Object.hash(runtimeType,product);
+}
 
 @override
 String toString() {
-  return 'AddProductState.success(product: $product)';
+    return 'AddProductState.success(product: $product)';
 }
 
 
@@ -608,16 +613,18 @@ $AddProductFailureCopyWith<AddProductFailure> get copyWith => _$AddProductFailur
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductFailure&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddProductFailure&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode {
+    return Object.hash(runtimeType,message);
+}
 
 @override
 String toString() {
-  return 'AddProductState.failure(message: $message)';
+    return 'AddProductState.failure(message: $message)';
 }
 
 

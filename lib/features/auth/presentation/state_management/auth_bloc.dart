@@ -93,13 +93,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
     final result = await _sessionUseCase();
     result.when(
-      success: (token) => emit(
-        Authenticated(
-          user: UserEntity(
-            accessToken: token.accessToken,
-            refreshToken: token.refreshToken,
-          ),
-        ),
+      success: (user) => emit(
+        Authenticated(user: user),
       ), // You might want to fetch user details using the token
       failure: (failure) => emit(const Unauthenticated()),
     );

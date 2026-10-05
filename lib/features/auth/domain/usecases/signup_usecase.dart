@@ -10,7 +10,7 @@ class SignupUseCase {
 
   Future<ApiResult<UserEntity>> call(JsonMap userMap) async {
     return await _repository.signUp(
-      userMap['fullName'],
+      userMap['fullname'],
       userMap['email'],
       userMap['password'],
     );

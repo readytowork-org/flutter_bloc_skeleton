@@ -38,7 +38,7 @@ base class LightTheme extends Typography {
         primary: AppColors.white,
         onPrimary: AppColors.primary,
         secondary: AppColors.secondary,
-        onSecondary: AppColors.white,
+        onSecondary: AppColors.black,
         error: AppColors.error,
         onError: AppColors.error,
         surface: AppColors.white,
@@ -48,6 +48,7 @@ base class LightTheme extends Typography {
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: AppColors.black,
       ),
+
       appBarTheme: const AppBarTheme(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: AppColors.primary,

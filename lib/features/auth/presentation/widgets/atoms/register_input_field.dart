@@ -18,7 +18,7 @@ class RegisterInputField extends StatelessWidget {
         mainAxisAlignment: .center,
         children: [
           InputField(
-            name: "full_name",
+            name: "fullname",
             hint: "Enter your full name",
             validator: FormValidator.fullName,
           ),

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'base_pagination_bloc.dart';
@@ -9,6 +9,7 @@ part of 'base_pagination_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$PaginationEvent<T> {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationEvent<T>);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationEvent<T>);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'PaginationEvent<$T>()';
+    return 'PaginationEvent<$T>()';
 }
 
 
@@ -197,7 +198,7 @@ class PaginationFetch<T> implements PaginationEvent<T> {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationFetch<T>);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationFetch<T>);
 }
 
 
@@ -206,7 +207,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'PaginationEvent<$T>.fetch()';
+    return 'PaginationEvent<$T>.fetch()';
 }
 
 
@@ -229,7 +230,7 @@ class PaginationRefresh<T> implements PaginationEvent<T> {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationRefresh<T>);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationRefresh<T>);
 }
 
 
@@ -238,7 +239,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'PaginationEvent<$T>.refresh()';
+    return 'PaginationEvent<$T>.refresh()';
 }
 
 
@@ -266,16 +267,18 @@ $PaginationUpdateLocallyCopyWith<T, PaginationUpdateLocally<T>> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationUpdateLocally<T>&&const DeepCollectionEquality().equals(other.data, data));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationUpdateLocally<T>&&const DeepCollectionEquality().equals(other.data, data));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(data));
+}
 
 @override
 String toString() {
-  return 'PaginationEvent<$T>.updateLocally(data: $data)';
+    return 'PaginationEvent<$T>.updateLocally(data: $data)';
 }
 
 
@@ -327,16 +330,21 @@ $PaginationStateCopyWith<T, PaginationState<T>> get copyWith => _$PaginationStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationState<T>&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.status, status) || other.status == status)&&(identical(other.error, error) || other.error == error)&&(identical(other.hasReachedMax, hasReachedMax) || other.hasReachedMax == hasReachedMax));
+  final _this = this as PaginationState<T>;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationState<T>&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.error, _this.error) || other.error == _this.error)&&(identical(other.hasReachedMax, _this.hasReachedMax) || other.hasReachedMax == _this.hasReachedMax));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),status,error,hasReachedMax);
+int get hashCode {
+  final _this = this as PaginationState<T>;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.data),_this.status,_this.error,_this.hasReachedMax);
+}
 
 @override
 String toString() {
-  return 'PaginationState<$T>(data: $data, status: $status, error: $error, hasReachedMax: $hasReachedMax)';
+  final _this = this as PaginationState<T>;
+  return 'PaginationState<$T>(data: ${_this.data}, status: ${_this.status}, error: ${_this.error}, hasReachedMax: ${_this.hasReachedMax})';
 }
 
 
@@ -365,7 +373,7 @@ class _$PaginationStateCopyWithImpl<T,$Res>
 /// Create a copy of PaginationState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? status = null,Object? error = freezed,Object? hasReachedMax = null,}) {
-  return _then(_self.copyWith(
+  return _then(PaginationState(
 data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
 as List<T>,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as PaginationStatus,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
@@ -511,7 +519,7 @@ return $default(_that.data,_that.status,_that.error,_that.hasReachedMax);case _:
 
 
 class _PaginationState<T> implements PaginationState<T> {
-  const _PaginationState({final  List<T> data = const [], this.status = PaginationStatus.initial, this.error, this.hasReachedMax = false}): _data = data;
+  const _PaginationState({ List<T> data = const [], this.status = PaginationStatus.initial, this.error, this.hasReachedMax = false}): _data = data;
   
 
  final  List<T> _data;
@@ -535,16 +543,18 @@ _$PaginationStateCopyWith<T, _PaginationState<T>> get copyWith => __$PaginationS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaginationState<T>&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.status, status) || other.status == status)&&(identical(other.error, error) || other.error == error)&&(identical(other.hasReachedMax, hasReachedMax) || other.hasReachedMax == hasReachedMax));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaginationState<T>&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.status, status) || other.status == status)&&(identical(other.error, error) || other.error == error)&&(identical(other.hasReachedMax, hasReachedMax) || other.hasReachedMax == hasReachedMax));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),status,error,hasReachedMax);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),status,error,hasReachedMax);
+}
 
 @override
 String toString() {
-  return 'PaginationState<$T>(data: $data, status: $status, error: $error, hasReachedMax: $hasReachedMax)';
+    return 'PaginationState<$T>(data: $data, status: $status, error: $error, hasReachedMax: $hasReachedMax)';
 }
 
 

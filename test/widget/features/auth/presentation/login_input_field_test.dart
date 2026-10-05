@@ -44,15 +44,6 @@ void main() {
       );
     });
 
-    testWidgets('pre-fills username and password from initialValue', (
-      tester,
-    ) async {
-      await pumpInputField(tester);
-
-      expect(find.text('emilys'), findsOneWidget);
-      expect(find.text('emilyspass'), findsOneWidget);
-    });
-
     // ── Validation: username ──────────────────────────────────────────────────
 
     testWidgets('empty username fails FormValidator.fullName', (tester) async {
@@ -103,7 +94,7 @@ void main() {
         find.byWidgetPredicate(
           (w) => w is FormBuilderTextField && w.name == 'username',
         ),
-        'john_doe',
+        'test@example.com',
       );
       await tester.enterText(
         find.byWidgetPredicate(
@@ -117,7 +108,7 @@ void main() {
       expect(isValid, isTrue);
 
       final values = formKey.currentState!.value;
-      expect(values['username'], 'john_doe');
+      expect(values['username'], 'test@example.com');
       expect(values['password'], 'securePass1');
     });
   });

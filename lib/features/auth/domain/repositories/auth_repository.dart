@@ -1,5 +1,4 @@
 import '../../../../core/network/api_result.dart';
-import '../entities/token_entity.dart';
 import '../entities/user_entity.dart';
 
 abstract class AuthRepository {
@@ -10,7 +9,6 @@ abstract class AuthRepository {
     String email,
     String password,
   );
-  Future<ApiResult<TokenEntity>> refreshToken(String token);
-  Future<ApiResult<TokenEntity>> getCurrentSession();
+  Future<ApiResult<UserEntity>> getCurrentSession();
   Future<ApiResult<String>> logout();
 }

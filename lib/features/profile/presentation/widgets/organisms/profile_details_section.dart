@@ -42,10 +42,7 @@ class ProfileDetailsSection extends StatelessWidget {
             ProfileInfoCard(
               icon: Icons.person_outline,
               title: 'Gender',
-              value: user.gender.toString().replaceFirst(
-                user.gender[0],
-                user.gender[0].toUpperCase(),
-              ),
+              value: "N/A",
             ),
 
             const SizedBox(height: 16),

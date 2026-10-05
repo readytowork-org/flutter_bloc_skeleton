@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'get_profile_bloc.dart';
@@ -9,6 +9,7 @@ part of 'get_profile_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$GetProfileEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProfileEvent);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProfileEvent);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProfileEvent()';
+    return 'GetProfileEvent()';
 }
 
 
@@ -191,7 +192,7 @@ class _Started implements GetProfileEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
 }
 
 
@@ -200,7 +201,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProfileEvent.started()';
+    return 'GetProfileEvent.started()';
 }
 
 
@@ -223,7 +224,7 @@ class GetProfileRequested implements GetProfileEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProfileRequested);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProfileRequested);
 }
 
 
@@ -232,7 +233,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProfileEvent.getProfileRequested()';
+    return 'GetProfileEvent.getProfileRequested()';
 }
 
 
@@ -250,7 +251,7 @@ mixin _$GetProfileState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProfileState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetProfileState);
 }
 
 
@@ -259,7 +260,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProfileState()';
+    return 'GetProfileState()';
 }
 
 
@@ -439,7 +440,7 @@ class ProfileInitial implements GetProfileState, BaseInitial {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileInitial);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileInitial);
 }
 
 
@@ -448,7 +449,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProfileState.initial()';
+    return 'GetProfileState.initial()';
 }
 
 
@@ -471,7 +472,7 @@ class ProfileLoading implements GetProfileState, BaseLoading {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileLoading);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileLoading);
 }
 
 
@@ -480,7 +481,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProfileState.loading()';
+    return 'GetProfileState.loading()';
 }
 
 
@@ -508,16 +509,18 @@ $ProfileLoadedCopyWith<ProfileLoaded> get copyWith => _$ProfileLoadedCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileLoaded&&(identical(other.res, res) || other.res == res));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileLoaded&&(identical(other.res, res) || other.res == res));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,res);
+int get hashCode {
+    return Object.hash(runtimeType,res);
+}
 
 @override
 String toString() {
-  return 'GetProfileState.loaded(res: $res)';
+    return 'GetProfileState.loaded(res: $res)';
 }
 
 
@@ -574,16 +577,18 @@ $ProfileFailureCopyWith<ProfileFailure> get copyWith => _$ProfileFailureCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileFailure&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileFailure&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode {
+    return Object.hash(runtimeType,message);
+}
 
 @override
 String toString() {
-  return 'GetProfileState.failure(message: $message)';
+    return 'GetProfileState.failure(message: $message)';
 }
 
 
@@ -635,7 +640,7 @@ class ProfileEmpty implements GetProfileState, BaseEmpty {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileEmpty);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileEmpty);
 }
 
 
@@ -644,7 +649,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'GetProfileState.empty()';
+    return 'GetProfileState.empty()';
 }
 
 
