@@ -1,0 +1,31 @@
+{
+  "auth": {
+    "home": "ホーム",
+    "name": "氏名",
+    "email_address": "メールアドレス",
+    "phone": "電話番号",
+    "furigana": "ふりがな",
+    "password": "パスワード"
+  },
+  "home": {
+    "product": "ホーム",
+    "product_name": "氏名",
+    "email_address": "メールアドレス",
+    "phone": "電話番号",
+    "furigana": "ふりがな"
+  },
+  "product": {
+    "product": "ホーム",
+    "product_name": "氏名",
+    "email_address": "メールアドレス",
+    "phone": "電話番号",
+    "furigana": "ふりがな"
+  },
+  "cart": {
+    "product": "ホーム",
+    "product_name": "氏名",
+    "email_address": "メールアドレス",
+    "phone": "電話番号",
+    "furigana": "ふりがな"
+  }
+}

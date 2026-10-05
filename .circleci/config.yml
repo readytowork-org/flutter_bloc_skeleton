@@ -1,0 +1,285 @@
+version: 2.1
+
+# Branch/PR pushes and version tags use "ci". Manual uploads select an action.
+parameters:
+  action:
+    type: enum
+    enum: [ci, ios_testflight, android_internal, ios_production, android_production]
+    default: ci
+
+commands:
+  install_flutter:
+    steps:
+      - restore_cache:
+          keys:
+            - flutter-v1-{{ arch }}-{{ checksum ".fvmrc" }}
+      - run:
+          name: Install the Flutter version in .fvmrc
+          command: |
+            set -euo pipefail
+            version="$(sed -nE 's/.*"flutter"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/p' .fvmrc)"
+            test -n "$version" || { echo 'Missing Flutter version in .fvmrc' >&2; exit 1; }
+            if [[ ! -x "$HOME/flutter/bin/flutter" ]]; then
+              git clone --depth 1 --branch "$version" https://github.com/flutter/flutter.git "$HOME/flutter"
+            fi
+            echo "export PATH=$HOME/flutter/bin:\$PATH" >> "$BASH_ENV"
+            "$HOME/flutter/bin/flutter" --version
+      - save_cache:
+          key: flutter-v1-{{ arch }}-{{ checksum ".fvmrc" }}
+          paths:
+            - ~/flutter
+
+  install_ios_fastlane:
+    steps:
+      - run:
+          name: Install iOS Fastlane from Gemfile.lock
+          command: |
+            set -euo pipefail
+            cd ios
+            gem install bundler -v 2.7.2 --no-document
+            bundle _2.7.2_ config set --local path vendor/bundle
+            bundle _2.7.2_ install --jobs 4 --retry 3
+
+  install_android_fastlane:
+    steps:
+      - run:
+          name: Install Android Fastlane from Gemfile.lock
+          command: |
+            set -euo pipefail
+            sudo apt-get update -qq
+            sudo apt-get install -y ruby-full ruby-dev
+            gem install bundler -v 4.0.20 --no-document
+            cd android
+            bundle _4.0.20_ config set --local path vendor/bundle
+            bundle _4.0.20_ install --jobs 4 --retry 3
+
+jobs:
+  validate_release_tag:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Require a version tag on main
+          command: bash scripts/circleci-verify-production-ref.sh tag
+      - run:
+          name: Notify rejected release tag
+          when: on_fail
+          command: bash scripts/circleci-notify-slack.sh failure "Production release tag validation failed"
+
+  ios_build:
+    macos:
+      xcode: "26.3.0"
+    resource_class: m4pro.medium
+    steps:
+      - checkout
+      - install_flutter
+      - run:
+          name: Restore development build configuration
+          command: bash scripts/circleci-prepare.sh ios build
+      - run:
+          name: Resolve Flutter packages
+          command: flutter pub get
+      - run:
+          name: Build unsigned iOS app
+          command: flutter build ios --release --no-codesign --no-pub
+      - run:
+          name: Notify successful iOS build
+          when: on_success
+          command: bash scripts/circleci-notify-slack.sh success "iOS CI build succeeded"
+      - run:
+          name: Notify failed iOS build
+          when: on_fail
+          command: bash scripts/circleci-notify-slack.sh failure "iOS CI build failed"
+
+  android_build:
+    docker:
+      - image: cimg/android:2026.08
+    resource_class: large
+    steps:
+      - checkout
+      - install_flutter
+      - run:
+          name: Restore development build configuration
+          command: bash scripts/circleci-prepare.sh android build
+      - run:
+          name: Resolve Flutter packages
+          command: flutter pub get
+      - run:
+          name: Build Android AAB without release credentials
+          command: flutter build appbundle --release --no-pub
+      - run:
+          name: Notify successful Android build
+          when: on_success
+          command: bash scripts/circleci-notify-slack.sh success "Android CI build succeeded"
+      - run:
+          name: Notify failed Android build
+          when: on_fail
+          command: bash scripts/circleci-notify-slack.sh failure "Android CI build failed"
+
+  ios_deploy:
+    parameters:
+      lane:
+        type: enum
+        enum: [beta, app_store_connect_upload]
+      production:
+        type: boolean
+        default: false
+    macos:
+      xcode: "26.3.0"
+    resource_class: m4pro.medium
+    steps:
+      - checkout
+      - when:
+          condition: << parameters.production >>
+          steps:
+            - run:
+                name: Verify production source
+                command: bash scripts/circleci-verify-production-ref.sh
+      - install_flutter
+      - install_ios_fastlane
+      - run:
+          name: Restore iOS configuration and signing credentials
+          command: bash scripts/circleci-prepare.sh ios deploy
+      - run:
+          name: Resolve Flutter packages
+          command: flutter pub get
+      - run:
+          name: Archive and upload iOS build
+          command: |
+            cd ios
+            bundle _2.7.2_ exec fastlane ios << parameters.lane >>
+      - run:
+          name: Notify successful iOS upload
+          when: on_success
+          command: bash scripts/circleci-notify-slack.sh success "iOS << parameters.lane >> upload succeeded"
+      - run:
+          name: Notify failed iOS upload
+          when: on_fail
+          command: bash scripts/circleci-notify-slack.sh failure "iOS << parameters.lane >> upload failed"
+
+  android_deploy:
+    parameters:
+      lane:
+        type: enum
+        enum: [internal, production_draft]
+      production:
+        type: boolean
+        default: false
+    docker:
+      - image: cimg/android:2026.08
+    resource_class: large
+    steps:
+      - checkout
+      - when:
+          condition: << parameters.production >>
+          steps:
+            - run:
+                name: Verify production source
+                command: bash scripts/circleci-verify-production-ref.sh
+      - install_flutter
+      - install_android_fastlane
+      - run:
+          name: Restore Android configuration and signing credentials
+          command: bash scripts/circleci-prepare.sh android deploy
+      - run:
+          name: Resolve Flutter packages
+          command: flutter pub get
+      - run:
+          name: Build AAB and upload to Google Play
+          command: |
+            cd android
+            bundle _4.0.20_ exec fastlane android << parameters.lane >>
+      - run:
+          name: Notify successful Android upload
+          when: on_success
+          command: bash scripts/circleci-notify-slack.sh success "Android << parameters.lane >> upload succeeded"
+      - run:
+          name: Notify failed Android upload
+          when: on_fail
+          command: bash scripts/circleci-notify-slack.sh failure "Android << parameters.lane >> upload failed"
+
+workflows:
+  branch_ci:
+    when: pipeline.parameters.action == "ci" and not pipeline.git.tag and (pipeline.event.name == "push" or pipeline.event.name == "pull_request")
+    jobs:
+      - ios_build:
+          context: flutter-skeleton-build
+      - android_build:
+          context: flutter-skeleton-build
+      - ios_deploy:
+          requires:
+            - ios_build
+          filters: pipeline.event.name == "push" and pipeline.git.branch == "develop"
+          lane: beta
+          context:
+            - flutter-skeleton-build
+            - flutter-skeleton-development
+      - android_deploy:
+          requires:
+            - android_build
+          filters: pipeline.event.name == "push" and pipeline.git.branch == "develop"
+          lane: internal
+          context:
+            - flutter-skeleton-build
+            - flutter-skeleton-development
+
+  version_tag_release:
+    when: pipeline.parameters.action == "ci" and pipeline.event.name == "push" and pipeline.git.tag matches /^v[0-9]+\.[0-9]+\.[0-9]+$/
+    jobs:
+      - validate_release_tag:
+          filters: pipeline.git.tag matches /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          context: 
+            - flutter-skeleton-build
+      - ios_deploy:
+          requires:
+            - validate_release_tag
+          filters: pipeline.git.tag matches /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          lane: app_store_connect_upload
+          production: true
+          context: 
+            - flutter-skeleton-production
+      - android_deploy:
+          requires:
+            - validate_release_tag
+          filters: pipeline.git.tag matches /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          lane: production_draft
+          production: true
+          context: 
+            - flutter-skeleton-production
+
+  testflight_manual:
+    when: pipeline.parameters.action == "ios_testflight" and pipeline.event.name == "api" and not pipeline.git.tag
+    jobs:
+      - ios_deploy:
+          lane: beta
+          context:
+            - flutter-skeleton-build
+            - flutter-skeleton-development
+
+  play_internal_manual:
+    when: pipeline.parameters.action == "android_internal" and pipeline.event.name == "api" and not pipeline.git.tag
+    jobs:
+      - android_deploy:
+          lane: internal
+          context:
+            - flutter-skeleton-build
+            - flutter-skeleton-development
+
+  app_store_connect_manual:
+    when: pipeline.parameters.action == "ios_production" and pipeline.event.name == "api" and pipeline.git.branch == "main"
+    jobs:
+      - ios_deploy:
+          lane: app_store_connect_upload
+          production: true
+          context: 
+            - flutter-skeleton-production
+
+  play_production_draft_manual:
+    when: pipeline.parameters.action == "android_production" and pipeline.event.name == "api" and pipeline.git.branch == "main"
+    jobs:
+      - android_deploy:
+          lane: production_draft
+          production: true
+          context: 
+            - flutter-skeleton-production
